@@ -1,12 +1,12 @@
 import { db } from "@/firebase/firebaseConfig";
 import { collection, getDocs, addDoc, query, where } from "firebase/firestore";
 import { NextResponse } from "next/server";
-import { getAuth } from "@clerk/nextjs/server";
+import { auth } from "@clerk/nextjs/server";
 
 // Hàm GET để lấy tất cả recipes
-export async function GET(request: Request) {
+export async function GET() {
   try {
-    const { userId } = getAuth(request); // Lấy userId từ yêu cầu
+    const { userId } = auth();
 
     if (!userId) {
       return NextResponse.json(
@@ -27,8 +27,17 @@ export async function GET(request: Request) {
     }));
 
     return NextResponse.json(recipes, { status: 200 });
-  } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 400 });
+  } catch (error: unknown) {
+    // Check if the error is an instance of Error
+    if (error instanceof Error) {
+      return NextResponse.json({ error: error.message }, { status: 400 });
+    }
+
+    // Fallback for non-Error types
+    return NextResponse.json(
+      { error: "An unexpected error occurred." },
+      { status: 400 },
+    );
   }
 }
 
@@ -38,7 +47,7 @@ export async function POST(request: Request) {
 
   try {
     // Lấy thông tin người dùng từ Clerk
-    const { userId } = getAuth(request); // Lấy userId từ yêu cầu
+    const { userId } = auth();
 
     if (!userId) {
       return NextResponse.json(
@@ -58,7 +67,16 @@ export async function POST(request: Request) {
       { id: newRecipeRef.id, message: "Recipe created successfully" },
       { status: 201 },
     );
-  } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 400 });
+  } catch (error: unknown) {
+    // Check if the error is an instance of Error
+    if (error instanceof Error) {
+      return NextResponse.json({ error: error.message }, { status: 400 });
+    }
+
+    // Fallback for non-Error types
+    return NextResponse.json(
+      { error: "An unexpected error occurred." },
+      { status: 400 },
+    );
   }
 }

@@ -4,7 +4,7 @@
   "HomePage": {
     "title": "Hello world!"
   },
-  "LanguageSwitcher": {
+  "LocaleSwitcher": {
     "en": "English",
     "vi": "Tiếng việt",
     "label": "Language"

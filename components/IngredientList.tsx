@@ -17,7 +17,7 @@ const IngredientList = ({
   onChange,
 }: {
   value: Ingredient[];
-  onChange: Function;
+  onChange: (ingredients: Ingredient[]) => void;
 }) => {
   const { ingredients, setIngredients, setLoading, setError } =
     useIngredientStore();
@@ -32,8 +32,11 @@ const IngredientList = ({
         }
         const data = await response.json();
         setIngredients(data);
-      } catch (error: any) {
-        setError(error.message);
+      } catch (error: unknown) {
+        // Check if the error is an instance of Error
+        if (error instanceof Error) {
+          setError(error.message);
+        }
       } finally {
         setLoading(false);
       }

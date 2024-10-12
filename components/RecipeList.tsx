@@ -74,8 +74,11 @@ export default function RecipeList() {
         }
         const data = await response.json();
         setRecipes(data);
-      } catch (error: any) {
-        setError(error.message);
+      } catch (error: unknown) {
+        // Check if the error is an instance of Error
+        if (error instanceof Error) {
+          setError(error.message);
+        }
       } finally {
         setLoading(false);
       }

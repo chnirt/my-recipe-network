@@ -14,8 +14,17 @@ export async function GET(
       return NextResponse.json({ error: "Recipe not found" }, { status: 404 });
     }
     return NextResponse.json(snapshot.data(), { status: 200 });
-  } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 400 });
+  } catch (error: unknown) {
+    // Check if the error is an instance of Error
+    if (error instanceof Error) {
+      return NextResponse.json({ error: error.message }, { status: 400 });
+    }
+
+    // Fallback for non-Error types
+    return NextResponse.json(
+      { error: "An unexpected error occurred." },
+      { status: 400 },
+    );
   }
 }
 
@@ -34,8 +43,17 @@ export async function PUT(
       { id: params.id, message: "Recipe updated successfully" },
       { status: 200 },
     );
-  } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 400 });
+  } catch (error: unknown) {
+    // Check if the error is an instance of Error
+    if (error instanceof Error) {
+      return NextResponse.json({ error: error.message }, { status: 400 });
+    }
+
+    // Fallback for non-Error types
+    return NextResponse.json(
+      { error: "An unexpected error occurred." },
+      { status: 400 },
+    );
   }
 }
 
@@ -52,7 +70,16 @@ export async function DELETE(
       { message: "Recipe deleted successfully" },
       { status: 200 },
     );
-  } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 400 });
+  } catch (error: unknown) {
+    // Check if the error is an instance of Error
+    if (error instanceof Error) {
+      return NextResponse.json({ error: error.message }, { status: 400 });
+    }
+
+    // Fallback for non-Error types
+    return NextResponse.json(
+      { error: "An unexpected error occurred." },
+      { status: 400 },
+    );
   }
 }

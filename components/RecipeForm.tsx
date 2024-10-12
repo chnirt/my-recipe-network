@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import React from "react";
 import { useRouter } from "next/navigation";
@@ -20,8 +19,6 @@ import {
 } from "@/components/ui/table";
 import IngredientForm from "@/components/IngredientForm";
 import IngredientList from "@/components/IngredientList";
-import useRecipeStore from "@/stores/recipeStore";
-import useIngredientStore from "@/stores/ingredientStore";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -34,6 +31,7 @@ import {
   FormMessage,
 } from "./ui/form";
 import { useTranslations } from "next-intl";
+import useRecipeStore from "@/stores/recipeStore";
 
 const ingredientSchema = z.object({
   name: z.string().min(1, "Ingredient name is required"), // Tên ingredient phải là chuỗi và không rỗng
@@ -121,8 +119,11 @@ const RecipeForm = () => {
         form.reset();
         back();
       }
-    } catch (error: any) {
-      setError(error.message);
+    } catch (error: unknown) {
+      // Check if the error is an instance of Error
+      if (error instanceof Error) {
+        setError(error.message);
+      }
     } finally {
       setLoading(false);
     }

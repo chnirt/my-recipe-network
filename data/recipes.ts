@@ -1,5 +1,4 @@
-// data/recipes.ts
-import { Recipe } from "@/types";
+import { Recipe } from "@/stores/recipeStore";
 
 export const recipes: Recipe[] = [
   {

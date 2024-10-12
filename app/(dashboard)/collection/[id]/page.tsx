@@ -3,20 +3,13 @@
 import RecipeList from "@/components/RecipeList";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { recipes } from "@/data/recipes";
 import { PlusCircle, Share } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import React, { useState } from "react";
+import React from "react";
 
-export default function Page({
-  params,
-}: {
-  params: {
-    id: string;
-  };
-}) {
-  const [copySuccess, setCopySuccess] = useState("");
+export default function Page() {
+  // const [copySuccess, setCopySuccess] = useState("");
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -30,10 +23,10 @@ export default function Page({
 
       await navigator.clipboard.writeText(fullUrl);
 
-      setCopySuccess("Copied!");
+      // setCopySuccess("Copied!");
     } catch (error: unknown) {
       console.log(error);
-      setCopySuccess("Failed to copy!");
+      // setCopySuccess("Failed to copy!");
     }
   };
 

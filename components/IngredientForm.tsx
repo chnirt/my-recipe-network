@@ -28,7 +28,7 @@ export const ingredientFormSchema = z.object({
   name: z.string().min(1).max(30),
 });
 
-const IngredientForm = ({ id }: { id?: string }) => {
+const IngredientForm = () => {
   const [open, setOpen] = useState(false);
   const { addIngredient, setLoading, setError } = useIngredientStore();
   const form = useForm<z.infer<typeof ingredientFormSchema>>({
@@ -68,8 +68,11 @@ const IngredientForm = ({ id }: { id?: string }) => {
         form.reset();
         setOpen(false);
       }
-    } catch (error: any) {
-      setError(error.message);
+    } catch (error: unknown) {
+      // Check if the error is an instance of Error
+      if (error instanceof Error) {
+        setError(error.message);
+      }
     } finally {
       setLoading(false);
     }
