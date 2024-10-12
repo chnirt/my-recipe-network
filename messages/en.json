@@ -1,0 +1,44 @@
+{
+  "greeting": "Hello",
+  "farewell": "Goodbye",
+  "HomePage": {
+    "title": "Hello world!"
+  },
+  "LanguageSwitcher": {
+    "en": "English",
+    "vi": "Tiếng việt",
+    "label": "Language"
+  },
+  "Navbar": {
+    "myCollection": "My Collection",
+    "settings": "Settings"
+  },
+  "Collection": {
+    "filterRecipes": "Filter recipes...",
+    "share": "Share",
+    "add": "Add"
+  },
+  "RecipeItem": {
+    "name": "Name",
+    "amount": "Amount"
+  },
+  "RecipeForm": {
+    "new": "New",
+    "discard": "Discard",
+    "save": "Save",
+    "details": "Details",
+    "name": "Name",
+    "recipeNamePlaceholder": "Enter recipe name",
+    "ingredients": "Ingredients",
+    "ingredient": "Ingredient",
+    "quantity": "Quantity",
+    "unit": "Unit"
+  },
+  "IngredientForm": {
+    "addIngredient": "Add Ingredient",
+    "newIngredient": "New ingredient",
+    "name": "Name",
+    "ingredientNamePlaceholder": "Enter ingredient name",
+    "save": "Save"
+  }
+}

@@ -1,0 +1,44 @@
+{
+  "greeting": "Xin chào",
+  "farewell": "Tạm biệt",
+  "HomePage": {
+    "title": "Xin chào!"
+  },
+  "LanguageSwitcher": {
+    "en": "English",
+    "vi": "Tiếng việt",
+    "label": "Ngôn ngữ"
+  },
+  "Navbar": {
+    "myCollection": "Bộ sưu tập của tôi",
+    "settings": "Cài đặt"
+  },
+  "Collection": {
+    "filterRecipes": "Lọc công thức...",
+    "share": "Chia sẻ",
+    "add": "Thêm"
+  },
+  "RecipeItem": {
+    "name": "Tên",
+    "amount": "Số lượng"
+  },
+  "RecipeForm": {
+    "new": "Mới",
+    "discard": "Bỏ qua",
+    "save": "Lưu",
+    "details": "Chi tiết",
+    "name": "Tên",
+    "recipeNamePlaceholder": "Nhập tên công thức",
+    "ingredients": "Thành phần",
+    "ingredient": "Thành phần",
+    "quantity": "Số lượng",
+    "unit": "Đơn vị"
+  },
+  "IngredientForm": {
+    "addIngredient": "Thêm thành phần",
+    "newIngredient":"Thành phần mới",
+    "name": "Tên",
+    "ingredientNamePlaceholder": "Nhập tên thành phần",
+    "save": "Lưu"
+  }
+}
