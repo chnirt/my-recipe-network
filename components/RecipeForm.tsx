@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ChevronLeft } from "lucide-react";
 import {
@@ -32,6 +32,7 @@ import {
 } from "./ui/form";
 import { useTranslations } from "next-intl";
 import useRecipeStore from "@/stores/recipeStore";
+import { toast } from "@/hooks/use-toast";
 
 const ingredientSchema = z.object({
   name: z.string().min(1, "Ingredient name is required"), // Tên ingredient phải là chuỗi và không rỗng
@@ -59,14 +60,20 @@ const recipeFormSchema = z.object({
   name: z.string().min(1, "Recipe name is required"), // Tên recipe không được để trống
   ingredients: z
     .array(ingredientSchema)
-    .min(1, "At least one ingredient is required"),
+    .min(1, "At least one ingredient is required")
+    .refine(
+      (ingredients) =>
+        ingredients.some((ingredient) => ingredient.quantity > 0),
+      {
+        message: "At least one ingredient must have a quantity greater than 0",
+        path: ["ingredients"],
+      },
+    ),
 });
 
-const RecipeForm = () => {
+const RecipeForm = ({ id }: { id?: string }) => {
   const router = useRouter();
-  const addRecipe = useRecipeStore((state) => state.addRecipe);
-  const setError = useRecipeStore((state) => state.setError);
-  const setLoading = useRecipeStore((state) => state.setLoading);
+  const { addRecipe, editRecipe, setError, setLoading } = useRecipeStore();
   const form = useForm<z.infer<typeof recipeFormSchema>>({
     resolver: zodResolver(recipeFormSchema),
     defaultValues: {
@@ -75,6 +82,43 @@ const RecipeForm = () => {
     },
   });
   const t = useTranslations("RecipeForm");
+  const [isEdit, setIsEdit] = useState(false);
+  const [open, setOpen] = useState(false);
+  const [ingredientId, setIngredientId] = useState("");
+
+  // Fetch data if we are in edit mode
+  useEffect(() => {
+    // Fetch the ingredient by ID
+    const fetchRecipeById = async (_id: string) => {
+      setIsEdit(true);
+      setLoading(true);
+
+      try {
+        const response = await fetch(`/api/recipes/${_id}`);
+        if (!response.ok) {
+          throw new Error(`Error fetching ingredient: ${response.statusText}`);
+        }
+        const data = await response.json();
+        // console.log("🚀 ~ fetchRecipeById ~ data:", data);
+
+        if (response.ok) {
+          form.reset({
+            name: data.name,
+            ingredients: data.ingredients,
+          });
+        }
+      } catch (error) {
+        if (error instanceof Error) {
+          setError(error.message);
+        }
+      } finally {
+        setLoading(false);
+      }
+    };
+    if (id) {
+      fetchRecipeById(id);
+    }
+  }, [form, id, setError, setLoading]);
 
   function back() {
     router.back();
@@ -88,7 +132,7 @@ const RecipeForm = () => {
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
     // console.log(values);
-    console.log("🚀 ~ onSubmit ~ values:", values);
+    // console.log("🚀 ~ onSubmit ~ values:", values);
     const name = values.name;
     const ingredients = values.ingredients;
 
@@ -96,29 +140,64 @@ const RecipeForm = () => {
       setLoading(true);
       setError(null);
 
-      const newRecipe = {
-        name,
-        ingredients,
-      };
+      if (isEdit && id) {
+        // Call editRecipe if editing
+        const editRecipeBody = {
+          name,
+          ingredients,
+        };
 
-      const response = await fetch("/api/recipes", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(newRecipe),
-      });
+        const response = await fetch(`/api/recipes/${id}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(editRecipeBody),
+        });
 
-      if (!response.ok) {
-        throw new Error(`Error: ${response.statusText}`);
+        if (!response.ok) {
+          throw new Error(`Error: ${response.statusText}`);
+        }
+
+        if (response.ok) {
+          const data = await response.json();
+          editRecipe(data.id, editRecipeBody);
+          toast({
+            title: t("editedTitle"),
+            description: t("editedDescription"),
+          });
+        }
+      } else {
+        // Call addRecipe if creating a new recipe
+        const newRecipeBody = {
+          name,
+          ingredients,
+        };
+
+        const response = await fetch("/api/recipes", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(newRecipeBody),
+        });
+
+        if (!response.ok) {
+          throw new Error(`Error: ${response.statusText}`);
+        }
+
+        if (response.ok) {
+          const data = await response.json();
+          addRecipe({ id: data.id, ...newRecipeBody });
+          toast({
+            title: t("createdTitle"),
+            description: t("createdDescription"),
+          });
+        }
       }
 
-      if (response.ok) {
-        const data = await response.json();
-        addRecipe({ id: data.id, ...newRecipe });
-        form.reset();
-        back();
-      }
+      form.reset();
+      back();
     } catch (error: unknown) {
       // Check if the error is an instance of Error
       if (error instanceof Error) {
@@ -129,12 +208,24 @@ const RecipeForm = () => {
     }
   }
 
+  function onIngredientClick(id: string) {
+    // console.log("🚀 ~ onIngredientClick ~ id:", id);
+
+    setIngredientId(id);
+    setOpen(true);
+  }
+
+  function onCancel() {
+    // setIngredientId("");
+  }
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)}>
         <div className="grid gap-4">
           <div className="flex items-center gap-4">
             <Button
+              type="button"
               variant="outline"
               size="icon"
               className="h-7 w-7"
@@ -144,10 +235,15 @@ const RecipeForm = () => {
               <span className="sr-only">Back</span>
             </Button>
             <h1 className="flex-1 shrink-0 whitespace-nowrap text-xl font-semibold tracking-tight sm:grow-0">
-              {t("new")}
+              {isEdit ? t("edit") : t("new")}
             </h1>
             <div className="hidden items-center gap-2 md:ml-auto md:flex">
-              <Button variant="outline" size="sm" onClick={cancel}>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={cancel}
+              >
                 {t("discard")}
               </Button>
               <Button size="sm" type="submit">
@@ -204,10 +300,15 @@ const RecipeForm = () => {
                               <TableHead className="w-[100px]">
                                 {t("unit")}
                               </TableHead>
+                              <TableHead>
+                                <span className="sr-only">Actions</span>
+                              </TableHead>
                             </TableRow>
                           </TableHeader>
                           <TableBody>
-                            <IngredientList {...field} />
+                            <IngredientList
+                              {...{ ...field, onIngredientClick }}
+                            />
                           </TableBody>
                         </Table>
                         <FormMessage />
@@ -216,13 +317,20 @@ const RecipeForm = () => {
                   />
                 </CardContent>
                 <CardFooter className="justify-center border-t p-4">
-                  <IngredientForm />
+                  <IngredientForm
+                    {...{
+                      open,
+                      setOpen,
+                      id: ingredientId,
+                      onCancel,
+                    }}
+                  />
                 </CardFooter>
               </Card>
             </div>
           </div>
           <div className="flex items-center justify-center gap-2 md:hidden">
-            <Button variant="outline" size="sm" onClick={cancel}>
+            <Button type="button" variant="outline" size="sm" onClick={cancel}>
               {t("discard")}
             </Button>
             <Button size="sm" type="submit">

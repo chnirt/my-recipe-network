@@ -13,6 +13,7 @@ type RecipeStore = {
   loading: boolean;
   error: string | null;
   addRecipe: (recipe: Recipe) => void;
+  editRecipe: (id: string, updatedRecipe: Recipe) => void;
   setRecipes: (recipes: Recipe[]) => void;
   setLoading: (loading: boolean) => void;
   setError: (error: string | null) => void;
@@ -25,6 +26,12 @@ const useRecipeStore = create<RecipeStore>((set) => ({
   addRecipe: (recipe: Recipe) =>
     set((state) => ({
       recipes: [...state.recipes, recipe],
+    })),
+  editRecipe: (id: string, updatedRecipe: Recipe) =>
+    set((state) => ({
+      recipes: state.recipes.map((recipe) =>
+        recipe.id === id ? { ...recipe, ...updatedRecipe } : recipe,
+      ),
     })),
   setRecipes: (recipes: Recipe[]) => set({ recipes }),
   setLoading: (loading: boolean) => set({ loading }),

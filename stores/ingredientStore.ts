@@ -13,6 +13,7 @@ type IngredientStore = {
   loading: boolean;
   error: string | null;
   addIngredient: (ingredient: Ingredient) => void;
+  editIngredient: (id: string, updatedIngredient: Ingredient) => void;
   setIngredients: (ingredients: Ingredient[]) => void;
   setLoading: (loading: boolean) => void;
   setError: (error: string | null) => void;
@@ -25,6 +26,14 @@ const useIngredientStore = create<IngredientStore>((set) => ({
   addIngredient: (ingredient: Ingredient) =>
     set((state) => ({
       ingredients: [...state.ingredients, ingredient],
+    })),
+  editIngredient: (id: string, updatedIngredient: Ingredient) =>
+    set((state) => ({
+      ingredients: state.ingredients.map((ingredient) =>
+        ingredient.id === id
+          ? { ...ingredient, ...updatedIngredient }
+          : ingredient,
+      ),
     })),
   setIngredients: (ingredients: Ingredient[]) => set({ ingredients }),
   setLoading: (loading: boolean) => set({ loading }),

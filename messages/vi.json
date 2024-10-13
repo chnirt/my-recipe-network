@@ -1,6 +1,18 @@
 {
   "greeting": "Xin chào",
   "farewell": "Tạm biệt",
+  "Units": {
+    "ml": "ml",
+    "gram": "gram",
+    "tablespoon": "muỗng canh",
+    "teaspoon": "muỗng cà phê",
+    "piece": "miếng",
+    "slice": "lát",
+    "cup": "cốc",
+    "pinch": "nhúm",
+    "tablet": "viên",
+    "cube": "viên đá"
+  },
   "HomePage": {
     "title": "Xin chào!"
   },
@@ -20,7 +32,12 @@
   },
   "RecipeItem": {
     "name": "Tên",
-    "amount": "Số lượng"
+    "ingredient": "Thành phần",
+    "amount": "Số lượng",
+    "deletedTitle": "Bạn có chắc chắn muốn xóa công thức này không?",
+    "deletedDescription": "Không thể hoàn tác hành động này. Việc xóa công thức này sẽ xóa công thức đó và tất cả dữ liệu liên quan khỏi.",
+    "cancel": "Hủy bỏ",
+    "continue": "Tiếp tục"
   },
   "RecipeForm": {
     "new": "Mới",
@@ -32,13 +49,25 @@
     "ingredients": "Thành phần",
     "ingredient": "Thành phần",
     "quantity": "Số lượng",
-    "unit": "Đơn vị"
+    "unit": "Đơn vị",
+    "edit": "Sửa",
+    "createdTitle": "Đã tạo: Công thức mới",
+    "createdDescription": "Công thức mới của bạn đã được tạo thành công.",
+    "editedTitle": "Đã cập nhật: Công thức",
+    "editedDescription": "Công thức của bạn đã được cập nhật thành công."
   },
   "IngredientForm": {
     "addIngredient": "Thêm thành phần",
-    "newIngredient":"Thành phần mới",
+    "newIngredient": "Thành phần mới",
     "name": "Tên",
     "ingredientNamePlaceholder": "Nhập tên thành phần",
     "save": "Lưu"
+  },
+  "IngredientList": {
+    "selectUnit": "Chọn đơn vị",
+    "deletedTitle": "Bạn có chắc chắn muốn xóa thành phần này không?",
+    "deletedDescription": "Không thể hoàn tác hành động này. Việc xóa thành phần này sẽ xóa thành phần đó và tất cả dữ liệu liên quan khỏi.",
+    "cancel": "Hủy bỏ",
+    "continue": "Tiếp tục"
   }
 }

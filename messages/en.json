@@ -1,6 +1,18 @@
 {
   "greeting": "Hello",
   "farewell": "Goodbye",
+  "Units": {
+    "ml": "ml",
+    "gram": "gram",
+    "tablespoon": "tablespoon",
+    "teaspoon": "teaspoon",
+    "piece": "piece",
+    "slice": "slice",
+    "cup": "cup",
+    "pinch": "pinch",
+    "tablet": "tablet",
+    "cube": "cube"
+  },
   "HomePage": {
     "title": "Hello world!"
   },
@@ -20,7 +32,12 @@
   },
   "RecipeItem": {
     "name": "Name",
-    "amount": "Amount"
+    "ingredient": "Ingredient",
+    "amount": "Amount",
+    "deletedTitle": "Are you sure you want to delete this recipe?",
+    "deletedDescription": "This action cannot be undone. Deleting this recipe will remove it and all its associated data from our.",
+    "cancel": "Cancel",
+    "continue": "Continue"
   },
   "RecipeForm": {
     "new": "New",
@@ -32,7 +49,12 @@
     "ingredients": "Ingredients",
     "ingredient": "Ingredient",
     "quantity": "Quantity",
-    "unit": "Unit"
+    "unit": "Unit",
+    "edit": "Edit",
+    "createdTitle": "Created: New Recipe",
+    "createdDescription": "Your new recipe has been successfully created.",
+    "editedTitle": "Updated: Recipe",
+    "editedDescription": "Your recipe has been successfully updated."
   },
   "IngredientForm": {
     "addIngredient": "Add Ingredient",
@@ -40,5 +62,12 @@
     "name": "Name",
     "ingredientNamePlaceholder": "Enter ingredient name",
     "save": "Save"
+  },
+  "IngredientList": {
+    "selectUnit": "Select unit",
+    "deletedTitle": "Are you sure you want to delete this ingredient?",
+    "deletedDescription": "This action cannot be undone. Deleting this ingredient will remove it and all its associated data from our.",
+    "cancel": "Cancel",
+    "continue": "Continue"
   }
 }

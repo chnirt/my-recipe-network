@@ -1,96 +1,73 @@
-// /app/api/ingredients/[id]/route.ts
 import { db } from "@/firebase/firebaseConfig";
 import { doc, getDoc, updateDoc, deleteDoc } from "firebase/firestore";
 import { NextResponse } from "next/server";
 
-// Hàm GET để lấy một ingredient dựa trên id
+// Utility function to handle errors
+const handleError = (error: unknown) => {
+  if (error instanceof Error) {
+    return { error: error.message, status: 400 };
+  }
+  return { error: "An unexpected error occurred.", status: 400 };
+};
+
+// Utility function for creating a JSON response
+const createResponse = (data: unknown, status: number) => {
+  return NextResponse.json(data, { status });
+};
+
+// GET function to retrieve an ingredient by ID
 export async function GET(
   request: Request,
   { params }: { params: { id: string } },
 ) {
-  const { id } = params;
-
   try {
-    const docRef = doc(db, "ingredients", id);
-    const snapshot = await getDoc(docRef);
+    const ingredientRef = doc(db, "ingredients", params.id);
+    const snapshot = await getDoc(ingredientRef);
 
     if (!snapshot.exists()) {
-      return NextResponse.json(
-        { error: "Ingredient not found" },
-        { status: 404 },
-      );
+      return createResponse({ error: "Ingredient not found" }, 404);
     }
 
-    return NextResponse.json(snapshot.data(), { status: 200 });
+    return createResponse(snapshot.data(), 200);
   } catch (error: unknown) {
-    // Check if the error is an instance of Error
-    if (error instanceof Error) {
-      return NextResponse.json({ error: error.message }, { status: 400 });
-    }
-
-    // Fallback for non-Error types
-    return NextResponse.json(
-      { error: "An unexpected error occurred." },
-      { status: 400 },
-    );
+    const { error: errorMsg, status } = handleError(error);
+    return createResponse({ error: errorMsg }, status);
   }
 }
 
-// Hàm PUT để cập nhật một ingredient
+// PUT function to update an ingredient by ID
 export async function PUT(
   request: Request,
   { params }: { params: { id: string } },
 ) {
-  const { id } = params;
-  const data = await request.json();
+  const data = await request.json(); // Get data from request body
 
   try {
-    const docRef = doc(db, "ingredients", id);
-    await updateDoc(docRef, data);
+    const ingredientRef = doc(db, "ingredients", params.id);
+    await updateDoc(ingredientRef, data); // Update ingredient in Firestore
 
-    return NextResponse.json(
-      { message: "Ingredient updated successfully" },
-      { status: 200 },
+    return createResponse(
+      { id: params.id, message: "Ingredient updated successfully" },
+      200,
     );
   } catch (error: unknown) {
-    // Check if the error is an instance of Error
-    if (error instanceof Error) {
-      return NextResponse.json({ error: error.message }, { status: 400 });
-    }
-
-    // Fallback for non-Error types
-    return NextResponse.json(
-      { error: "An unexpected error occurred." },
-      { status: 400 },
-    );
+    const { error: errorMsg, status } = handleError(error);
+    return createResponse({ error: errorMsg }, status);
   }
 }
 
-// Hàm DELETE để xóa một ingredient
+// DELETE function to remove an ingredient by ID
 export async function DELETE(
   request: Request,
   { params }: { params: { id: string } },
 ) {
-  const { id } = params;
-
   try {
-    const docRef = doc(db, "ingredients", id);
-    await deleteDoc(docRef);
+    const ingredientRef = doc(db, "ingredients", params.id);
+    await deleteDoc(ingredientRef); // Remove ingredient from Firestore
 
-    return NextResponse.json(
-      { message: "Ingredient deleted successfully" },
-      { status: 200 },
-    );
+    return createResponse({ message: "Ingredient deleted successfully" }, 200);
   } catch (error: unknown) {
-    // Check if the error is an instance of Error
-    if (error instanceof Error) {
-      return NextResponse.json({ error: error.message }, { status: 400 });
-    }
-
-    // Fallback for non-Error types
-    return NextResponse.json(
-      { error: "An unexpected error occurred." },
-      { status: 400 },
-    );
+    const { error: errorMsg, status } = handleError(error);
+    return createResponse({ error: errorMsg }, status);
   }
 }

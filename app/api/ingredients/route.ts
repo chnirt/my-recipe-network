@@ -1,19 +1,37 @@
-// /app/api/ingredients/route.ts
 import { db } from "@/firebase/firebaseConfig";
 import { auth } from "@clerk/nextjs/server";
-import { collection, getDocs, addDoc, query, where } from "firebase/firestore";
+import {
+  collection,
+  getDocs,
+  addDoc,
+  updateDoc,
+  deleteDoc,
+  query,
+  where,
+  doc,
+} from "firebase/firestore";
 import { NextResponse } from "next/server";
 
-// Hàm GET để lấy tất cả ingredients
+// Utility function to handle errors
+const handleError = (error: unknown) => {
+  if (error instanceof Error) {
+    return { error: error.message, status: 400 };
+  }
+  return { error: "An unexpected error occurred.", status: 400 };
+};
+
+// Utility function for creating a JSON response
+const createResponse = (data: unknown, status: number) => {
+  return NextResponse.json(data, { status });
+};
+
+// GET function to retrieve all ingredients for the authenticated user
 export async function GET() {
   try {
     const { userId } = auth();
 
     if (!userId) {
-      return NextResponse.json(
-        { error: "User not authenticated" },
-        { status: 401 },
-      );
+      return createResponse({ error: "User not authenticated" }, 401);
     }
 
     const ingredientsCollectionRef = collection(db, "ingredients");
@@ -27,56 +45,36 @@ export async function GET() {
       ...doc.data(),
     }));
 
-    return NextResponse.json(ingredients, { status: 200 });
+    return createResponse(ingredients, 200);
   } catch (error: unknown) {
-    // Check if the error is an instance of Error
-    if (error instanceof Error) {
-      return NextResponse.json({ error: error.message }, { status: 400 });
-    }
-
-    // Fallback for non-Error types
-    return NextResponse.json(
-      { error: "An unexpected error occurred." },
-      { status: 400 },
-    );
+    const { error: errorMsg, status } = handleError(error);
+    return createResponse({ error: errorMsg }, status);
   }
 }
 
-// Hàm POST để tạo một ingredient mới
+// POST function to create a new ingredient
 export async function POST(request: Request) {
-  const data = await request.json(); // Lấy dữ liệu từ request body
+  const data = await request.json(); // Get data from request body
 
   try {
-    // Lấy thông tin người dùng từ Clerk
     const { userId } = auth();
 
     if (!userId) {
-      return NextResponse.json(
-        { error: "User not authenticated" },
-        { status: 401 },
-      );
+      return createResponse({ error: "User not authenticated" }, 401);
     }
 
     const ingredientsCollectionRef = collection(db, "ingredients");
     const newIngredientRef = await addDoc(ingredientsCollectionRef, {
       name: data.name,
       createdBy: userId,
-    }); // Thêm ingredient mới vào Firestore
+    });
 
-    return NextResponse.json(
+    return createResponse(
       { id: newIngredientRef.id, message: "Ingredient created successfully" },
-      { status: 201 },
+      201,
     );
   } catch (error: unknown) {
-    // Check if the error is an instance of Error
-    if (error instanceof Error) {
-      return NextResponse.json({ error: error.message }, { status: 400 });
-    }
-
-    // Fallback for non-Error types
-    return NextResponse.json(
-      { error: "An unexpected error occurred." },
-      { status: 400 },
-    );
+    const { error: errorMsg, status } = handleError(error);
+    return createResponse({ error: errorMsg }, status);
   }
 }

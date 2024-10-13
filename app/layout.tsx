@@ -5,6 +5,7 @@ import "./globals.css";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { NextIntlClientProvider } from "next-intl";
 import { getLocale, getMessages } from "next-intl/server";
+import { Toaster } from "@/components/ui/toaster";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -42,6 +43,7 @@ export default async function RootLayout({
           <TooltipProvider>
             <NextIntlClientProvider messages={messages}>
               {children}
+              <Toaster />
             </NextIntlClientProvider>
           </TooltipProvider>
         </body>

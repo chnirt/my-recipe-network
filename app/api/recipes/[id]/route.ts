@@ -2,7 +2,20 @@ import { db } from "@/firebase/firebaseConfig";
 import { doc, getDoc, updateDoc, deleteDoc } from "firebase/firestore";
 import { NextResponse } from "next/server";
 
-// Hàm GET để lấy thông tin của một recipe theo ID
+// Utility function to handle errors
+const handleError = (error: unknown) => {
+  if (error instanceof Error) {
+    return { error: error.message, status: 400 };
+  }
+  return { error: "An unexpected error occurred.", status: 400 };
+};
+
+// Utility function for creating a JSON response
+const createResponse = (data: unknown, status: number) => {
+  return NextResponse.json(data, { status });
+};
+
+// GET function to retrieve a recipe by ID
 export async function GET(
   request: Request,
   { params }: { params: { id: string } },
@@ -10,76 +23,51 @@ export async function GET(
   try {
     const recipeRef = doc(db, "recipes", params.id);
     const snapshot = await getDoc(recipeRef);
+
     if (!snapshot.exists()) {
-      return NextResponse.json({ error: "Recipe not found" }, { status: 404 });
-    }
-    return NextResponse.json(snapshot.data(), { status: 200 });
-  } catch (error: unknown) {
-    // Check if the error is an instance of Error
-    if (error instanceof Error) {
-      return NextResponse.json({ error: error.message }, { status: 400 });
+      return createResponse({ error: "Recipe not found" }, 404);
     }
 
-    // Fallback for non-Error types
-    return NextResponse.json(
-      { error: "An unexpected error occurred." },
-      { status: 400 },
-    );
+    return createResponse(snapshot.data(), 200);
+  } catch (error: unknown) {
+    const { error: errorMsg, status } = handleError(error);
+    return createResponse({ error: errorMsg }, status);
   }
 }
 
-// Hàm PUT để cập nhật thông tin của một recipe theo ID
+// PUT function to update a recipe by ID
 export async function PUT(
   request: Request,
   { params }: { params: { id: string } },
 ) {
-  const data = await request.json(); // Lấy dữ liệu từ request body
+  const data = await request.json(); // Get data from request body
 
   try {
     const recipeRef = doc(db, "recipes", params.id);
-    await updateDoc(recipeRef, data); // Cập nhật recipe trong Firestore
+    await updateDoc(recipeRef, data); // Update recipe in Firestore
 
-    return NextResponse.json(
+    return createResponse(
       { id: params.id, message: "Recipe updated successfully" },
-      { status: 200 },
+      200,
     );
   } catch (error: unknown) {
-    // Check if the error is an instance of Error
-    if (error instanceof Error) {
-      return NextResponse.json({ error: error.message }, { status: 400 });
-    }
-
-    // Fallback for non-Error types
-    return NextResponse.json(
-      { error: "An unexpected error occurred." },
-      { status: 400 },
-    );
+    const { error: errorMsg, status } = handleError(error);
+    return createResponse({ error: errorMsg }, status);
   }
 }
 
-// Hàm DELETE để xóa một recipe theo ID
+// DELETE function to remove a recipe by ID
 export async function DELETE(
   request: Request,
   { params }: { params: { id: string } },
 ) {
   try {
     const recipeRef = doc(db, "recipes", params.id);
-    await deleteDoc(recipeRef); // Xóa recipe trong Firestore
+    await deleteDoc(recipeRef); // Remove recipe from Firestore
 
-    return NextResponse.json(
-      { message: "Recipe deleted successfully" },
-      { status: 200 },
-    );
+    return createResponse({ message: "Recipe deleted successfully" }, 200);
   } catch (error: unknown) {
-    // Check if the error is an instance of Error
-    if (error instanceof Error) {
-      return NextResponse.json({ error: error.message }, { status: 400 });
-    }
-
-    // Fallback for non-Error types
-    return NextResponse.json(
-      { error: "An unexpected error occurred." },
-      { status: 400 },
-    );
+    const { error: errorMsg, status } = handleError(error);
+    return createResponse({ error: errorMsg }, status);
   }
 }

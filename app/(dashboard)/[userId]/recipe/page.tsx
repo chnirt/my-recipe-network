@@ -3,6 +3,7 @@
 import RecipeList from "@/components/RecipeList";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { useAuth } from "@clerk/nextjs";
 import { PlusCircle, Share } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
@@ -14,6 +15,7 @@ export default function Page() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const t = useTranslations("Collection");
+  const { userId } = useAuth();
 
   const copyToClipboard = async (): Promise<void> => {
     try {
@@ -31,13 +33,11 @@ export default function Page() {
   };
 
   function share() {
-    console.log("🚀 ~ share ~ share:");
     copyToClipboard();
   }
 
   function add() {
-    console.log("🚀 ~ add ~ add:");
-    router.push("/collection/add");
+    router.push(`/${userId}/recipe/add`);
   }
 
   return (
