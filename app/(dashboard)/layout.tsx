@@ -2,7 +2,7 @@
 
 import { SignedIn, useAuth, UserButton } from "@clerk/nextjs";
 import React, { useCallback } from "react";
-import { GlassWater, Settings2, Triangle } from "lucide-react";
+import { GlassWater, Triangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Tooltip,
@@ -23,11 +23,11 @@ function Navbar() {
   const goToHome = useCallback(() => router.push("/"), [router]);
 
   const goToMyCollection = useCallback(
-    () => router.push(`/collection/${userId}`),
+    () => router.push(`/${userId}/recipe/`),
     [router, userId],
   );
 
-  const goToSettings = useCallback(() => router.push("/settings"), [router]);
+  // const goToSettings = useCallback(() => router.push("/settings"), [router]);
 
   return (
     <aside className="inset-y fixed left-0 z-20 flex h-full flex-col border-r">
@@ -61,7 +61,7 @@ function Navbar() {
             {t("myCollection")}
           </TooltipContent>
         </Tooltip>
-        <Tooltip>
+        {/* <Tooltip>
           <TooltipTrigger asChild>
             <Button
               variant="ghost"
@@ -79,7 +79,7 @@ function Navbar() {
           <TooltipContent side="right" sideOffset={5}>
             {t("settings")}
           </TooltipContent>
-        </Tooltip>
+        </Tooltip> */}
       </nav>
       <nav className="mt-auto grid gap-1 p-2">
         <LocaleSwitcher />

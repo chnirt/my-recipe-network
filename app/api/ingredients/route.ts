@@ -1,15 +1,6 @@
 import { db } from "@/firebase/firebaseConfig";
 import { auth } from "@clerk/nextjs/server";
-import {
-  collection,
-  getDocs,
-  addDoc,
-  updateDoc,
-  deleteDoc,
-  query,
-  where,
-  doc,
-} from "firebase/firestore";
+import { collection, getDocs, addDoc, query, where } from "firebase/firestore";
 import { NextResponse } from "next/server";
 
 // Utility function to handle errors
