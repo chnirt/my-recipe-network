@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from "react";
+import { useEffect } from "react";
 import useIngredientStore, { Ingredient } from "@/stores/ingredientStore";
 import { TableCell, TableRow } from "./ui/table";
 import { Label } from "./ui/label";
@@ -25,7 +25,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "./ui/alert-dialog";
-import { toast } from "@/hooks/use-toast";
+import { Unit } from "@/types";
 
 const columns = ["Ingredient", "Quantity", "Unit"];
 
@@ -38,74 +38,17 @@ const IngredientList = ({
   onChange: (ingredients: Ingredient[]) => void;
   onIngredientClick: (id: string) => void;
 }) => {
-  const {
-    ingredients,
-    setIngredients,
-    // setLoading, setError,
-    loading,
-    error,
-  } = useIngredientStore();
+  const { ingredients, loading, error, fetchIngredients, removeIngredient } =
+    useIngredientStore();
   const t = useTranslations("IngredientList");
   const unitsT = useTranslations("Units");
-
-  const fetchIngredients = useCallback(async () => {
-    // setLoading(true);
-    try {
-      const response = await fetch("/api/ingredients");
-      if (!response.ok) {
-        throw new Error("Failed to fetch ingredients");
-      }
-      const data = await response.json();
-      setIngredients(data);
-    } catch (error: unknown) {
-      // Check if the error is an instance of Error
-      if (error instanceof Error) {
-        // setError(error.message);
-      }
-    } finally {
-      // setLoading(false);
-    }
-  }, [setIngredients]);
-
-  const remove = async (id: string) => {
-    try {
-      const response = await fetch(`/api/ingredients/${id}`, {
-        method: "DELETE",
-      });
-
-      if (!response.ok) {
-        throw new Error(`Failed to delete ingredient: ${response.statusText}`);
-      }
-
-      toast({
-        title: "Ingredient Deleted",
-        description: "The ingredient has been successfully deleted.",
-      });
-
-      // Refetch the ingredients to update the list
-      fetchIngredients();
-    } catch (error: unknown) {
-      if (error instanceof Error) {
-        toast({
-          title: "Error",
-          description: error.message || "Failed to delete the ingredient.",
-          variant: "destructive",
-        });
-      }
-    }
-  };
 
   useEffect(() => {
     fetchIngredients();
   }, [fetchIngredients]);
 
-  if (loading) {
-    return <p>Loading...</p>;
-  }
-
-  if (error) {
-    return <p>Error: {error}</p>;
-  }
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>{error}</p>;
 
   return (
     <>
@@ -134,7 +77,7 @@ const IngredientList = ({
                   value={
                     value.length > 0
                       ? (value.find(
-                          (valueItem) => valueItem.name === ingredient.name,
+                          (valueItem) => valueItem.id === ingredient.id,
                         )?.quantity ?? "")
                       : ""
                   }
@@ -143,18 +86,18 @@ const IngredientList = ({
                       ? (e) => {
                           let ingredients = value;
 
-                          const name = ingredient.name;
+                          const id = ingredient.id;
                           const quantity = Number(e.target.value);
-                          const unit = "ml";
+                          const unit: Unit = "ml";
 
                           const newIngredient = {
-                            name,
+                            id,
                             quantity,
                             unit,
                           };
 
                           const existingIngredientIndex = value.findIndex(
-                            (ing) => ing.name === ingredient.name,
+                            (ing) => ing.id === ingredient.id,
                           );
 
                           if (existingIngredientIndex !== -1) {
@@ -178,24 +121,24 @@ const IngredientList = ({
                   value={
                     value.length > 0
                       ? (value.find(
-                          (valueItem) => valueItem.name === ingredient.name,
+                          (valueItem) => valueItem.id === ingredient.id,
                         )?.unit ?? undefined)
                       : undefined
                   }
-                  onValueChange={(unit) => {
+                  onValueChange={(unit: Unit) => {
                     let ingredients = value;
 
-                    const name = ingredient.name;
+                    const id = ingredient.id;
                     const quantity = 1;
 
                     const newIngredient = {
-                      name,
+                      id,
                       quantity,
                       unit,
                     };
 
                     const existingIngredientIndex = value.findIndex(
-                      (ing) => ing.name === ingredient.name,
+                      (ing) => ing.id === ingredient.id,
                     );
 
                     if (existingIngredientIndex !== -1) {
@@ -242,7 +185,9 @@ const IngredientList = ({
                       <AlertDialogCancel>{t("cancel")}</AlertDialogCancel>
                       <AlertDialogAction
                         onClick={() =>
-                          ingredient.id ? remove(ingredient.id) : undefined
+                          ingredient.id
+                            ? removeIngredient(ingredient.id)
+                            : undefined
                         }
                       >
                         {t("continue")}

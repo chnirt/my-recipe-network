@@ -32,10 +32,9 @@ import {
 } from "./ui/form";
 import { useTranslations } from "next-intl";
 import useRecipeStore from "@/stores/recipeStore";
-import { toast } from "@/hooks/use-toast";
 
 const ingredientSchema = z.object({
-  name: z.string().min(1, "Ingredient name is required"), // Tên ingredient phải là chuỗi và không rỗng
+  id: z.string().min(1, "Id is required"),
   quantity: z
     .number()
     .nonnegative("Quantity must be greater than or equal to 0"), // Số lượng phải là số dương
@@ -72,53 +71,35 @@ const recipeFormSchema = z.object({
 });
 
 const RecipeForm = ({ id }: { id?: string }) => {
+  const defaultValues = {
+    name: "",
+    ingredients: [],
+  };
   const router = useRouter();
-  const { addRecipe, editRecipe, setError, setLoading } = useRecipeStore();
+  const { addRecipe, fetchRecipe, editRecipe } = useRecipeStore();
   const form = useForm<z.infer<typeof recipeFormSchema>>({
     resolver: zodResolver(recipeFormSchema),
-    defaultValues: {
-      name: "",
-      ingredients: [],
-    },
+    defaultValues,
   });
   const t = useTranslations("RecipeForm");
-  const [isEdit, setIsEdit] = useState(false);
   const [open, setOpen] = useState(false);
   const [ingredientId, setIngredientId] = useState("");
 
-  // Fetch data if we are in edit mode
+  // Fetch ingredient data if an id is provided
   useEffect(() => {
-    // Fetch the ingredient by ID
-    const fetchRecipeById = async (_id: string) => {
-      setIsEdit(true);
-      setLoading(true);
-
-      try {
-        const response = await fetch(`/api/recipes/${_id}`);
-        if (!response.ok) {
-          throw new Error(`Error fetching ingredient: ${response.statusText}`);
-        }
-        const data = await response.json();
-        // console.log("🚀 ~ fetchRecipeById ~ data:", data);
-
-        if (response.ok) {
+    if (id) {
+      const fetchData = async () => {
+        const ingredient = await fetchRecipe(id);
+        if (ingredient) {
           form.reset({
-            name: data.name,
-            ingredients: data.ingredients,
+            name: ingredient.name,
+            ingredients: ingredient.ingredients,
           });
         }
-      } catch (error) {
-        if (error instanceof Error) {
-          setError(error.message);
-        }
-      } finally {
-        setLoading(false);
-      }
-    };
-    if (id) {
-      fetchRecipeById(id);
+      };
+      fetchData();
     }
-  }, [form, id, setError, setLoading]);
+  }, [id, fetchRecipe, form]);
 
   function back() {
     router.back();
@@ -131,92 +112,36 @@ const RecipeForm = ({ id }: { id?: string }) => {
   async function onSubmit(values: z.infer<typeof recipeFormSchema>) {
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
-    // console.log(values);
     // console.log("🚀 ~ onSubmit ~ values:", values);
     const name = values.name;
     const ingredients = values.ingredients;
 
     try {
-      setLoading(true);
-      setError(null);
-
-      if (isEdit && id) {
-        // Call editRecipe if editing
-        const editRecipeBody = {
-          name,
-          ingredients,
-        };
-
-        const response = await fetch(`/api/recipes/${id}`, {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(editRecipeBody),
-        });
-
-        if (!response.ok) {
-          throw new Error(`Error: ${response.statusText}`);
-        }
-
-        if (response.ok) {
-          const data = await response.json();
-          editRecipe(data.id, editRecipeBody);
-          toast({
-            title: t("editedTitle"),
-            description: t("editedDescription"),
-          });
-        }
+      const newRecipe = { name, ingredients };
+      if (id) {
+        editRecipe(id, newRecipe);
       } else {
-        // Call addRecipe if creating a new recipe
-        const newRecipeBody = {
-          name,
-          ingredients,
-        };
-
-        const response = await fetch("/api/recipes", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(newRecipeBody),
-        });
-
-        if (!response.ok) {
-          throw new Error(`Error: ${response.statusText}`);
-        }
-
-        if (response.ok) {
-          const data = await response.json();
-          addRecipe({ id: data.id, ...newRecipeBody });
-          toast({
-            title: t("createdTitle"),
-            description: t("createdDescription"),
-          });
-        }
+        addRecipe(newRecipe);
       }
 
-      form.reset();
+      form.reset(defaultValues);
       back();
     } catch (error: unknown) {
       // Check if the error is an instance of Error
       if (error instanceof Error) {
-        setError(error.message);
       }
     } finally {
-      setLoading(false);
     }
   }
 
   function onIngredientClick(id: string) {
     // console.log("🚀 ~ onIngredientClick ~ id:", id);
-
     setIngredientId(id);
     setOpen(true);
   }
 
   function onCancel() {
-    // setIngredientId("");
+    setIngredientId("");
   }
 
   return (
@@ -235,7 +160,7 @@ const RecipeForm = ({ id }: { id?: string }) => {
               <span className="sr-only">Back</span>
             </Button>
             <h1 className="flex-1 shrink-0 whitespace-nowrap text-xl font-semibold tracking-tight sm:grow-0">
-              {isEdit ? t("edit") : t("new")}
+              {id ? t("edit") : t("new")}
             </h1>
             <div className="hidden items-center gap-2 md:ml-auto md:flex">
               <Button
@@ -247,7 +172,7 @@ const RecipeForm = ({ id }: { id?: string }) => {
                 {t("discard")}
               </Button>
               <Button size="sm" type="submit">
-                {t("save")}
+                {id ? t("edit") : t("save")}
               </Button>
             </div>
           </div>

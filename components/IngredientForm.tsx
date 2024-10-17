@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useEffect } from "react";
 import {
   Sheet,
   SheetContent,
@@ -25,7 +25,10 @@ import {
 import { useTranslations } from "next-intl";
 
 export const ingredientFormSchema = z.object({
-  name: z.string().min(1).max(30),
+  name: z
+    .string()
+    .min(1, "Name is required")
+    .max(30, "Name must not exceed 30 characters"),
 });
 
 const IngredientForm = ({
@@ -39,7 +42,7 @@ const IngredientForm = ({
   id?: string;
   onCancel?: () => void;
 }) => {
-  const { addIngredient, editIngredient, setLoading, setError } =
+  const { addIngredient, fetchIngredient, editIngredient } =
     useIngredientStore();
   const form = useForm<z.infer<typeof ingredientFormSchema>>({
     resolver: zodResolver(ingredientFormSchema),
@@ -48,100 +51,43 @@ const IngredientForm = ({
     },
   });
   const t = useTranslations("IngredientForm");
-  const [isEdit, setIsEdit] = useState(false);
 
   // Fetch ingredient data if an id is provided
   useEffect(() => {
-    const fetchIngredient = async (_id: string) => {
-      setIsEdit(true);
-      // setLoading(true);
-
-      try {
-        const response = await fetch(`/api/ingredients/${_id}`);
-        if (!response.ok) {
-          throw new Error(`Error fetching ingredient: ${response.statusText}`);
-        }
-        const data = await response.json();
-        // Set form values with the fetched data
-        if (response.ok) {
+    if (id) {
+      const fetchData = async () => {
+        const ingredient = await fetchIngredient(id);
+        if (ingredient) {
           form.reset({
-            name: data.name,
+            name: ingredient.name, // Set the fetched ingredient's name into the form
           });
         }
-      } catch (error: unknown) {
-        if (error instanceof Error) {
-          // setError(error.message);
-        }
-      } finally {
-        // setLoading(false);
-      }
-    };
-
-    if (id) {
-      fetchIngredient(id);
+      };
+      fetchData();
     }
-  }, [id, setLoading, setError, form]);
+  }, [id, fetchIngredient, form]);
 
   async function onSubmit(values: z.infer<typeof ingredientFormSchema>) {
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
-    // console.log(values);
     // console.log("🚀 ~ onSubmit ~ values:", values);
     const name = String(values.name).trim();
 
     try {
-      // setLoading(true);
-      // setError(null);
+      const newIngredient = { name };
 
-      if (isEdit && id) {
-        // Call updateIngradient if editing
-        const editIngredientBody = {
-          name,
-        };
-
-        const response = await fetch(`/api/ingredients/${id}`, {
-          method: "PUT", // Use PUT method for update
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(editIngredientBody), // Send the updated data
-        });
-
-        if (!response.ok) {
-          throw new Error(`Error: ${response.statusText}`);
-        }
-
-        // Process the response
-        const data = await response.json();
-        console.log("🚀 ~ onSubmit ~ data:", data);
-        editIngredient(data.id, editIngredientBody); // Call the update function in your store
+      if (id) {
+        editIngredient(id, newIngredient);
       } else {
-        // Call addIngredient if creating a new ingredient
-        const newIngredientBody = { name };
-
-        const response = await fetch("/api/ingredients", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(newIngredientBody),
-        });
-
-        if (!response.ok) {
-          throw new Error(`Error: ${response.statusText}`);
-        }
-
-        if (response.ok) {
-          const data = await response.json();
-          addIngredient({ id: data.id, ...newIngredientBody });
-        }
+        addIngredient(newIngredient);
       }
 
-      form.reset();
       setOpen(false);
     } catch (error: unknown) {
       // Check if the error is an instance of Error
       if (error instanceof Error) {
-        // setError(error.message);
       }
     } finally {
-      // setLoading(false);
     }
   }
 

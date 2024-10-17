@@ -1,7 +1,7 @@
 "use client";
 
 import { SignedIn, useAuth, UserButton } from "@clerk/nextjs";
-import React, { useCallback } from "react";
+import React, { useCallback, useEffect } from "react";
 import { GlassWater, Triangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -19,6 +19,8 @@ function Navbar() {
   const router = useRouter();
   const { userId } = useAuth();
   const pathname = usePathname();
+
+  useEffect(()=> {}, [])
 
   const goToHome = useCallback(() => router.push("/"), [router]);
 

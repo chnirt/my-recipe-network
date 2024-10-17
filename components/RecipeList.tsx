@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from "react";
+import React, { useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Button } from "./ui/button";
 import { Pen, Trash } from "lucide-react";
@@ -25,7 +25,6 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "./ui/alert-dialog";
-import { toast } from "@/hooks/use-toast";
 
 function RecipeItem({
   recipe,
@@ -114,74 +113,21 @@ function RecipeItem({
 }
 
 export default function RecipeList() {
-  const { recipes, setRecipes, setLoading, setError, loading, error } =
+  const { recipes, loading, error, fetchRecipes, removeRecipe } =
     useRecipeStore();
-
-  const fetchRecipes = useCallback(async () => {
-    setLoading(true);
-    try {
-      const response = await fetch("/api/recipes");
-      if (!response.ok) {
-        throw new Error("Failed to fetch recipes");
-      }
-      const data = await response.json();
-      setRecipes(data);
-    } catch (error: unknown) {
-      // Check if the error is an instance of Error
-      if (error instanceof Error) {
-        setError(error.message);
-      }
-    } finally {
-      setLoading(false);
-    }
-  }, [setError, setLoading, setRecipes]);
-
-  const remove = async (id: string) => {
-    try {
-      const response = await fetch(`/api/recipes/${id}`, {
-        method: "DELETE",
-      });
-
-      if (!response.ok) {
-        throw new Error(`Failed to delete recipe: ${response.statusText}`);
-      }
-
-      toast({
-        title: "Recipe Deleted",
-        description: "The recipe has been successfully deleted.",
-      });
-
-      // Call fetchRecipes to refresh the recipe list
-      fetchRecipes();
-    } catch (error: unknown) {
-      // Check if the error is an instance of Error
-      if (error instanceof Error) {
-        toast({
-          title: "Error",
-          description: error.message || "Failed to delete the recipe.",
-          variant: "destructive",
-        });
-      }
-    }
-  };
 
   useEffect(() => {
     fetchRecipes();
   }, [fetchRecipes]);
 
-  if (loading) {
-    return <p>Loading...</p>;
-  }
-
-  if (error) {
-    return <p>Error: {error}</p>;
-  }
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>{error}</p>;
 
   return (
     <div className="flex flex-col gap-4">
       {recipes.map((recipe, index) => (
         <div key={index}>
-          <RecipeItem {...{ recipe, remove }} />
+          <RecipeItem {...{ recipe, remove: removeRecipe }} />
         </div>
       ))}
     </div>
