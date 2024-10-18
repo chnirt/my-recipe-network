@@ -13,7 +13,8 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import useInvitationStore from "@/stores/invitationStore";
+// import useInvitationStore from "@/stores/invitationStore";
+// import useInviteLinkStore from "@/stores/inviteLinkStore";
 import useRecipeStore from "@/stores/recipeStore";
 import { useAuth } from "@clerk/nextjs";
 import { debounce } from "lodash";
@@ -29,7 +30,8 @@ export default function Page() {
   const [searchName, setSearchName] = useState("");
   const { fetchRecipes } = useRecipeStore();
   const [open, setOpen] = useState(false);
-  const { addInvitation } = useInvitationStore();
+  // const { addInvitation } = useInvitationStore();
+  // const { addInviteLink } = useInviteLinkStore();
   const [invitationLink, setInvitationLink] = useState("");
   const [copySuccess, setCopySuccess] = useState(false);
 
@@ -55,10 +57,19 @@ export default function Page() {
   async function createInvitationLink() {
     const recipeId = userId;
     if (recipeId) {
-      const invitation = await addInvitation({ recipeId });
-      const invitationId = invitation.id;
-      const fullUrl: string = `${window.location.origin}/accept-invitation/${invitationId}`;
-      setInvitationLink(fullUrl);
+      // const invitation = await addInvitation({ recipeId });
+      // const invitationId = invitation.id;
+      // const fullUrl: string = `${window.location.origin}/accept-invitation/${invitationId}`;
+      // addInvitation(newInviteLink);
+      // setInvitationLink(fullUrl);
+      const generateLink: string = `${window.location.origin}/accept-invite/${recipeId}`;
+      const newInviteLink = {
+        recipeId,
+        inviteLink: generateLink,
+      };
+      console.log("🚀 ~ createInvitationLink ~ newInviteLink:", newInviteLink)
+      // const inviteLink = await addInviteLink(newInviteLink);
+      // setInvitationLink(inviteLink);
       setOpen(true);
     }
   }

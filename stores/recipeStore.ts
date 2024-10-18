@@ -1,11 +1,21 @@
 import { create } from "zustand";
 import { Ingredient } from "./ingredientStore";
+import useIngredientStore from "./ingredientStore"; // Import the ingredient store
 
 export type Recipe = {
   id?: string;
   name: string;
   note?: string;
   ingredients: Ingredient[];
+};
+
+// Define the type for the final mapped recipe
+export type MappedRecipe = Omit<Recipe, "ingredients"> & {
+  ingredients: Array<{
+    id: string;
+    name: string;
+    quantity: number;
+  }>;
 };
 
 // Define the type for fetching recipes
@@ -19,20 +29,24 @@ export type EditRecipePayload = Recipe;
 
 type RecipeStore = {
   recipes: Recipe[];
+  mappedRecipes: MappedRecipe[];
   loading: boolean;
   error: string | null;
   fetchRecipes: (name?: string) => Promise<FetchRecipesResponse>;
+  fetchRecipesWithIngredients: () => Promise<void>;
   fetchRecipe: (id: string) => Promise<Recipe | null>;
   addRecipe: (recipe: AddRecipePayload) => Promise<void>;
   editRecipe: (id: string, updatedRecipe: EditRecipePayload) => Promise<void>;
   removeRecipe: (id: string) => Promise<void>;
   setRecipes: (recipes: Recipe[]) => void;
+  setMappedRecipes: (recipes: MappedRecipe[]) => void;
   setLoading: (loading: boolean) => void;
   setError: (error: string | null) => void;
 };
 
 const useRecipeStore = create<RecipeStore>((set) => ({
   recipes: [],
+  mappedRecipes: [],
   loading: false,
   error: null,
 
@@ -54,6 +68,48 @@ const useRecipeStore = create<RecipeStore>((set) => ({
       return []; // Return empty array on error
     } finally {
       set({ loading: false }); // Always set loading to false
+    }
+  },
+
+  // Fetch both recipes and ingredients, then map them
+  fetchRecipesWithIngredients: async () => {
+    set({ loading: true, error: null });
+    try {
+      // Fetch both recipes and ingredients
+      const fetchRecipesPromise = fetch("/api/recipes");
+      const fetchIngredientsPromise = useIngredientStore
+        .getState()
+        .fetchIngredients();
+
+      const [recipesResponse, ingredientsResponse] = await Promise.all([
+        fetchRecipesPromise,
+        fetchIngredientsPromise,
+      ]);
+
+      const recipes = await recipesResponse.json();
+      const ingredients = useIngredientStore.getState().ingredients;
+
+      // Map ingredients into recipes
+      const mappedRecipes = recipes.map((recipe: Recipe) => {
+        const mappedIngredients = recipe.ingredients.map((ingredient) => {
+          const ingredientData = ingredients.find(
+            (ing) => ing.id === ingredient.id,
+          );
+          return {
+            id: ingredient.id,
+            name: ingredientData ? ingredientData.name : "Unknown ingredient",
+            quantity: ingredient.quantity,
+            unit: ingredient.unit,
+          };
+        });
+        return { ...recipe, ingredients: mappedIngredients };
+      });
+
+      set({ recipes, mappedRecipes });
+    } catch (error: unknown) {
+      set({ error: (error as Error).message });
+    } finally {
+      set({ loading: false });
     }
   },
 
@@ -149,6 +205,8 @@ const useRecipeStore = create<RecipeStore>((set) => ({
 
   // Setters
   setRecipes: (recipes: Recipe[]) => set({ recipes }),
+  setMappedRecipes: (recipes: MappedRecipe[]) =>
+    set({ mappedRecipes: recipes }),
   setLoading: (loading: boolean) => set({ loading }),
   setError: (error: string | null) => set({ error }),
 }));

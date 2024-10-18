@@ -1,14 +1,5 @@
 import { db } from "@/firebase/firebaseConfig";
-import {
-  collection,
-  getDocs,
-  addDoc,
-  query,
-  where,
-  getDoc,
-  DocumentData,
-  doc,
-} from "firebase/firestore";
+import { collection, getDocs, addDoc, query, where } from "firebase/firestore";
 import { Recipe } from "@/stores/recipeStore";
 import { Ingredient } from "@/stores/ingredientStore";
 import {
@@ -54,17 +45,8 @@ export async function GET(request: Request) {
             );
           }
 
-          const ingredientRef = doc(db, "ingredients", ingredient.id);
-          const ingredientSnapshot = await getDoc(ingredientRef);
-
-          if (!ingredientSnapshot.exists()) {
-            throw new Error(`Ingredient not found for ID: ${ingredient.id}`);
-          }
-
-          const ingredientData = ingredientSnapshot.data() as DocumentData;
           ingredients.push({
-            id: ingredientSnapshot.id,
-            name: ingredientData.name,
+            id: ingredient.id,
             quantity: ingredient.quantity,
             unit: ingredient.unit,
           });
