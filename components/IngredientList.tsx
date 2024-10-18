@@ -26,6 +26,7 @@ import {
   AlertDialogTrigger,
 } from "./ui/alert-dialog";
 import { Unit } from "@/types";
+import NumberInput from "./NumberInput";
 
 const columns = ["Ingredient", "Quantity", "Unit"];
 
@@ -93,50 +94,45 @@ const IngredientList = ({
                   <Label htmlFor="quantity-1" className="sr-only">
                     Quantity
                   </Label>
-                  <Input
-                    id="quantity-1"
-                    type="number"
-                    min={0}
+                  <NumberInput
                     value={
                       value.length > 0
                         ? (value.find(
                             (valueItem) => valueItem.id === ingredient.id,
-                          )?.quantity ?? "")
-                        : ""
+                          )?.quantity ?? 0)
+                        : 0
                     }
-                    onChange={
-                      typeof onChange === "function"
-                        ? (e) => {
-                            let ingredients = value;
+                    onChange={(number) => {
+                      let ingredients = value;
 
-                            const id = ingredient.id;
-                            const quantity = Number(e.target.value);
-                            const unit: Unit = "ml";
+                      const id = ingredient.id;
+                      const quantity = Number(number);
+                      const unit: Unit = "ml";
 
-                            const newIngredient = {
-                              id,
-                              quantity,
-                              unit,
-                            };
+                      const newIngredient = {
+                        id,
+                        quantity,
+                        unit,
+                      };
 
-                            const existingIngredientIndex = value.findIndex(
-                              (ing) => ing.id === ingredient.id,
-                            );
+                      const existingIngredientIndex = value.findIndex(
+                        (ing) => ing.id === ingredient.id,
+                      );
 
-                            if (existingIngredientIndex !== -1) {
-                              const updatedIngredients = [...value];
-                              updatedIngredients[existingIngredientIndex] = {
-                                ...updatedIngredients[existingIngredientIndex],
-                                quantity,
-                              };
-                              ingredients = updatedIngredients;
-                            } else {
-                              ingredients = [...value, newIngredient];
-                            }
-                            onChange(ingredients);
-                          }
-                        : undefined
-                    }
+                      if (existingIngredientIndex !== -1) {
+                        const updatedIngredients = [...value];
+                        updatedIngredients[existingIngredientIndex] = {
+                          ...updatedIngredients[existingIngredientIndex],
+                          quantity,
+                        };
+                        ingredients = updatedIngredients;
+                      } else {
+                        ingredients = [...value, newIngredient];
+                      }
+                      if (typeof onChange === "function") {
+                        onChange(ingredients);
+                      }
+                    }}
                   />
                 </TableCell>
                 <TableCell>

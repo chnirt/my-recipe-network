@@ -252,10 +252,10 @@ const RecipeForm = ({ id }: { id?: string }) => {
                         <Table>
                           <TableHeader>
                             <TableRow>
-                              <TableHead className="w-[100px]">
+                              <TableHead className="w-[100px] sm:w-full">
                                 {t("ingredient")}
                               </TableHead>
-                              <TableHead className="w-[100px]">
+                              <TableHead className="w-[300px]">
                                 {t("quantity")}
                               </TableHead>
                               <TableHead className="w-[100px]">
