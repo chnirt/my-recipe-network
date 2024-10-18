@@ -33,6 +33,7 @@ import {
 import { useTranslations } from "next-intl";
 import useRecipeStore from "@/stores/recipeStore";
 import { Textarea } from "./ui/textarea";
+import { Ingredient } from "@/stores/ingredientStore";
 
 const ingredientSchema = z.object({
   id: z.string().min(1, "Id is required"),
@@ -64,7 +65,6 @@ const recipeFormSchema = z.object({
     .max(30, "Recipe name must be at most 30 characters long"), // Max length for recipe name
   note: z
     .string()
-    .min(1, "Note is required") // Note is required
     .max(200, "Note must be at most 200 characters long") // Max length for note
     .optional(), // Note is optional
   ingredients: z
@@ -95,6 +95,7 @@ const RecipeForm = ({ id }: { id?: string }) => {
   const t = useTranslations("RecipeForm");
   const [open, setOpen] = useState(false);
   const [ingredientId, setIngredientId] = useState("");
+  const [ingredients, setIngredients] = useState<Ingredient[]>([]);
 
   // Fetch ingredient data if an id is provided
   useEffect(() => {
@@ -102,6 +103,7 @@ const RecipeForm = ({ id }: { id?: string }) => {
       const fetchData = async () => {
         const ingredient = await fetchRecipe(id);
         if (ingredient) {
+          setIngredients(ingredient.ingredients);
           form.reset({
             name: ingredient.name,
             note: ingredient.note,
@@ -266,7 +268,11 @@ const RecipeForm = ({ id }: { id?: string }) => {
                           </TableHeader>
                           <TableBody>
                             <IngredientList
-                              {...{ ...field, onIngredientClick }}
+                              {...{
+                                defaultValue: ingredients,
+                                ...field,
+                                onIngredientClick,
+                              }}
                             />
                           </TableBody>
                         </Table>

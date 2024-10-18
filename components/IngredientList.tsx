@@ -30,10 +30,12 @@ import { Unit } from "@/types";
 const columns = ["Ingredient", "Quantity", "Unit"];
 
 const IngredientList = ({
+  defaultValue,
   value = [],
   onChange,
   onIngredientClick,
 }: {
+  defaultValue: Ingredient[];
   value: Ingredient[];
   onChange: (ingredients: Ingredient[]) => void;
   onIngredientClick: (id: string) => void;
@@ -54,7 +56,7 @@ const IngredientList = ({
       {ingredients.length > 0 ? (
         ingredients
           .map((ingredient) => {
-            const unit = value.find((v) => v.id === ingredient.id);
+            const unit = defaultValue.find((v) => v.id === ingredient.id);
             return { ...ingredient, unit };
           })
           .sort((a, b) => {
