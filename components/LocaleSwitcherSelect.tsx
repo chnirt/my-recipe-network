@@ -28,7 +28,7 @@ export default function LocaleSwitcherSelect({
   }
 
   return (
-    <div className="relative">
+    <div className="relative z-30">
       <Select.Root defaultValue={defaultValue} onValueChange={onChange}>
         <Select.Trigger
           aria-label={label}
@@ -44,7 +44,7 @@ export default function LocaleSwitcherSelect({
         <Select.Portal>
           <Select.Content
             align="end"
-            className="overflow-hidden rounded-sm bg-white py-1 shadow-md"
+            className="overflow-hidden rounded-sm bg-white py-1 shadow-md z-40"
             position="popper"
           >
             <Select.Viewport>

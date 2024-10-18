@@ -33,7 +33,7 @@ function RecipeItem({
   recipe: Recipe;
   remove: (id: string) => Promise<void>;
 }) {
-  const t = useTranslations("RecipeItem");
+  const t = useTranslations();
   const router = useRouter();
   const { userId } = useAuth();
 
@@ -62,17 +62,19 @@ function RecipeItem({
             </AlertDialogTrigger>
             <AlertDialogContent>
               <AlertDialogHeader>
-                <AlertDialogTitle>{t("deletedTitle")}</AlertDialogTitle>
+                <AlertDialogTitle>
+                  {t("RecipeItem.deletedTitle")}
+                </AlertDialogTitle>
                 <AlertDialogDescription>
-                  {t("deletedDescription")}
+                  {t("RecipeItem.deletedDescription")}
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
-                <AlertDialogCancel>{t("cancel")}</AlertDialogCancel>
+                <AlertDialogCancel>{t("RecipeItem.cancel")}</AlertDialogCancel>
                 <AlertDialogAction
                   onClick={() => (recipe.id ? remove(recipe.id) : undefined)}
                 >
-                  {t("continue")}
+                  {t("RecipeItem.continue")}
                 </AlertDialogAction>
               </AlertDialogFooter>
             </AlertDialogContent>
@@ -83,8 +85,10 @@ function RecipeItem({
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>{t("ingredient")}</TableHead>
-              <TableHead className="text-right">{t("amount")}</TableHead>
+              <TableHead>{t("RecipeItem.ingredient")}</TableHead>
+              <TableHead className="text-right">
+                {t("RecipeItem.amount")}
+              </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -94,14 +98,7 @@ function RecipeItem({
                   <div className="font-medium">{ingredient.name}</div>
                 </TableCell>
                 <TableCell className="text-right">
-                  {ingredient.quantity}{" "}
-                  {ingredient.unit === "ml"
-                    ? ingredient.unit
-                    : ingredient.quantity
-                      ? ingredient.quantity > 1
-                        ? ingredient.unit + "s"
-                        : ingredient.unit
-                      : ""}
+                  {ingredient.quantity} {t(`Units.${ingredient.unit}`)}
                 </TableCell>
               </TableRow>
             ))}

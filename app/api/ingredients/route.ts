@@ -1,29 +1,16 @@
 import { db } from "@/firebase/firebaseConfig";
-import { auth } from "@clerk/nextjs/server";
 import { collection, getDocs, addDoc, query, where } from "firebase/firestore";
-import { NextResponse } from "next/server";
-
-// Utility function to handle errors
-const handleError = (error: unknown) => {
-  if (error instanceof Error) {
-    return { error: error.message, status: 400 };
-  }
-  return { error: "An unexpected error occurred.", status: 400 };
-};
-
-// Utility function for creating a JSON response
-const createResponse = (data: unknown, status: number) => {
-  return NextResponse.json(data, { status });
-};
+import {
+  authenticateUser,
+  createResponse,
+  handleErrorAndRespond,
+} from "@/lib/apiUtils";
 
 // GET function to retrieve all ingredients for the authenticated user
 export async function GET() {
   try {
-    const { userId } = auth();
-
-    if (!userId) {
-      return createResponse({ error: "User not authenticated" }, 401);
-    }
+    // Ensure user is authenticated
+    const userId = authenticateUser();
 
     const ingredientsCollectionRef = collection(db, "ingredients");
     const ingredientsQuery = query(
@@ -38,8 +25,7 @@ export async function GET() {
 
     return createResponse(ingredients, 200);
   } catch (error: unknown) {
-    const { error: errorMsg, status } = handleError(error);
-    return createResponse({ error: errorMsg }, status);
+    return handleErrorAndRespond(error);
   }
 }
 
@@ -48,11 +34,8 @@ export async function POST(request: Request) {
   const data = await request.json(); // Get data from request body
 
   try {
-    const { userId } = auth();
-
-    if (!userId) {
-      return createResponse({ error: "User not authenticated" }, 401);
-    }
+    // Ensure user is authenticated
+    const userId = authenticateUser();
 
     const ingredientsCollectionRef = collection(db, "ingredients");
     const newIngredientRef = await addDoc(ingredientsCollectionRef, {
@@ -65,7 +48,6 @@ export async function POST(request: Request) {
       201,
     );
   } catch (error: unknown) {
-    const { error: errorMsg, status } = handleError(error);
-    return createResponse({ error: errorMsg }, status);
+    return handleErrorAndRespond(error);
   }
 }

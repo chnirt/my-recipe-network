@@ -22,13 +22,17 @@
     "label": "Ngôn ngữ"
   },
   "Navbar": {
-    "myCollection": "Bộ sưu tập của tôi",
+    "myRecipe": "Công thức của tôi",
     "settings": "Cài đặt"
   },
   "Collection": {
     "filterRecipes": "Lọc công thức...",
     "share": "Chia sẻ",
-    "add": "Thêm"
+    "add": "Thêm",
+    "shareTitle": "Chia sẻ liên kết công thức của bạn",
+    "shareDescription": "Bất kỳ ai có liên kết này đều có thể tham khảo công thức của bạn và tận hưởng sự kỳ diệu của ẩm thực!",
+    "copy": "Sao chép",
+    "close": "Đóng"
   },
   "RecipeItem": {
     "name": "Tên",

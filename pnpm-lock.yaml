@@ -68,6 +68,9 @@ dependencies:
   next-intl:
     specifier: ^3.21.1
     version: 3.21.1(next@14.2.15)(react@18.3.1)
+  next-themes:
+    specifier: ^0.3.0
+    version: 0.3.0(react-dom@18.3.1)(react@18.3.1)
   react:
     specifier: ^18
     version: 18.3.1
@@ -77,6 +80,9 @@ dependencies:
   react-hook-form:
     specifier: ^7.53.0
     version: 7.53.0(react@18.3.1)
+  sonner:
+    specifier: ^1.5.0
+    version: 1.5.0(react-dom@18.3.1)(react@18.3.1)
   tailwind-merge:
     specifier: ^2.5.3
     version: 2.5.3
@@ -3664,6 +3670,16 @@ packages:
       use-intl: 3.21.1(react@18.3.1)
     dev: false
 
+  /next-themes@0.3.0(react-dom@18.3.1)(react@18.3.1):
+    resolution: {integrity: sha512-/QHIrsYpd6Kfk7xakK4svpDI5mmXP0gfvCoJdGpZQ2TOrQZmsW0QxjaiLn8wbIKjtm4BTSqLoix4lxYYOnLJ/w==}
+    peerDependencies:
+      react: ^16.8 || ^17 || ^18
+      react-dom: ^16.8 || ^17 || ^18
+    dependencies:
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
+    dev: false
+
   /next@14.2.15(react-dom@18.3.1)(react@18.3.1):
     resolution: {integrity: sha512-h9ctmOokpoDphRvMGnwOJAedT6zKhwqyZML9mDtspgf4Rh3Pn7UTYKqePNoDvhsWBAO5GoPNYshnAUGIazVGmw==}
     engines: {node: '>=18.17.0'}
@@ -4320,6 +4336,16 @@ packages:
       map-obj: 4.3.0
       snake-case: 3.0.4
       type-fest: 2.19.0
+    dev: false
+
+  /sonner@1.5.0(react-dom@18.3.1)(react@18.3.1):
+    resolution: {integrity: sha512-FBjhG/gnnbN6FY0jaNnqZOMmB73R+5IiyYAw8yBj7L54ER7HB3fOSE5OFiQiE2iXWxeXKvg6fIP4LtVppHEdJA==}
+    peerDependencies:
+      react: ^18.0.0
+      react-dom: ^18.0.0
+    dependencies:
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
     dev: false
 
   /source-map-js@1.2.1:

@@ -9,32 +9,19 @@ import {
   DocumentData,
   doc,
 } from "firebase/firestore";
-import { NextResponse } from "next/server";
-import { auth } from "@clerk/nextjs/server";
 import { Recipe } from "@/stores/recipeStore";
 import { Ingredient } from "@/stores/ingredientStore";
-
-// Utility function to handle errors
-const handleError = (error: unknown) => {
-  if (error instanceof Error) {
-    return { error: error.message, status: 400 };
-  }
-  return { error: "An unexpected error occurred.", status: 400 };
-};
-
-// Utility function for creating a JSON response
-const createResponse = (data: unknown, status: number) => {
-  return NextResponse.json(data, { status });
-};
+import {
+  authenticateUser,
+  createResponse,
+  handleErrorAndRespond,
+} from "@/lib/apiUtils";
 
 // GET function to retrieve all recipes for the authenticated user with optional search
 export async function GET(request: Request) {
   try {
-    const { userId } = auth();
-
-    if (!userId) {
-      return createResponse({ error: "User not authenticated" }, 401);
-    }
+    // Ensure user is authenticated
+    const userId = authenticateUser();
 
     // Get the search parameter from the request URL
     const url = new URL(request.url);
@@ -95,8 +82,7 @@ export async function GET(request: Request) {
 
     return createResponse(recipesWithIngredients, 200);
   } catch (error: unknown) {
-    const { error: errorMsg, status } = handleError(error);
-    return createResponse({ error: errorMsg }, status);
+    return handleErrorAndRespond(error);
   }
 }
 
@@ -105,11 +91,8 @@ export async function POST(request: Request) {
   const data = await request.json(); // Get data from request body
 
   try {
-    const { userId } = auth();
-
-    if (!userId) {
-      return createResponse({ error: "User not authenticated" }, 401);
-    }
+    // Ensure user is authenticated
+    const userId = authenticateUser();
 
     const recipesCollectionRef = collection(db, "recipes");
     const newRecipeRef = await addDoc(recipesCollectionRef, {
@@ -123,7 +106,6 @@ export async function POST(request: Request) {
       201,
     );
   } catch (error: unknown) {
-    const { error: errorMsg, status } = handleError(error);
-    return createResponse({ error: errorMsg }, status);
+    return handleErrorAndRespond(error);
   }
 }

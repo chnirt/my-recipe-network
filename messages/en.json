@@ -22,13 +22,17 @@
     "label": "Language"
   },
   "Navbar": {
-    "myCollection": "My Collection",
+    "myRecipe": "My Recipe",
     "settings": "Settings"
   },
   "Collection": {
     "filterRecipes": "Filter recipes...",
     "share": "Share",
-    "add": "Add"
+    "add": "Add",
+    "shareTitle": "Share Your Recipe Link",
+    "shareDescription": "Anyone with this link can dive into your recipe and enjoy the culinary magic!",
+    "copy": "Copy",
+    "close": "Close"
   },
   "RecipeItem": {
     "name": "Name",

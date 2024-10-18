@@ -1,19 +1,10 @@
 import { db } from "@/firebase/firebaseConfig";
 import { doc, getDoc, updateDoc, deleteDoc } from "firebase/firestore";
-import { NextResponse } from "next/server";
-
-// Utility function to handle errors
-const handleError = (error: unknown) => {
-  if (error instanceof Error) {
-    return { error: error.message, status: 400 };
-  }
-  return { error: "An unexpected error occurred.", status: 400 };
-};
-
-// Utility function for creating a JSON response
-const createResponse = (data: unknown, status: number) => {
-  return NextResponse.json(data, { status });
-};
+import {
+  authenticateUser,
+  createResponse,
+  handleErrorAndRespond,
+} from "@/lib/apiUtils";
 
 // GET function to retrieve an ingredient by ID
 export async function GET(
@@ -21,6 +12,9 @@ export async function GET(
   { params }: { params: { id: string } },
 ) {
   try {
+    // Ensure user is authenticated
+    authenticateUser();
+
     const ingredientRef = doc(db, "ingredients", params.id);
     const snapshot = await getDoc(ingredientRef);
 
@@ -30,8 +24,7 @@ export async function GET(
 
     return createResponse(snapshot.data(), 200);
   } catch (error: unknown) {
-    const { error: errorMsg, status } = handleError(error);
-    return createResponse({ error: errorMsg }, status);
+    return handleErrorAndRespond(error);
   }
 }
 
@@ -43,6 +36,9 @@ export async function PUT(
   const data = await request.json(); // Get data from request body
 
   try {
+    // Ensure user is authenticated
+    authenticateUser();
+
     const ingredientRef = doc(db, "ingredients", params.id);
     await updateDoc(ingredientRef, data); // Update ingredient in Firestore
 
@@ -51,8 +47,7 @@ export async function PUT(
       200,
     );
   } catch (error: unknown) {
-    const { error: errorMsg, status } = handleError(error);
-    return createResponse({ error: errorMsg }, status);
+    return handleErrorAndRespond(error);
   }
 }
 
@@ -62,12 +57,14 @@ export async function DELETE(
   { params }: { params: { id: string } },
 ) {
   try {
+    // Ensure user is authenticated
+    authenticateUser();
+
     const ingredientRef = doc(db, "ingredients", params.id);
     await deleteDoc(ingredientRef); // Remove ingredient from Firestore
 
     return createResponse({ message: "Ingredient deleted successfully" }, 200);
   } catch (error: unknown) {
-    const { error: errorMsg, status } = handleError(error);
-    return createResponse({ error: errorMsg }, status);
+    return handleErrorAndRespond(error);
   }
 }

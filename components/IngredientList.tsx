@@ -40,8 +40,7 @@ const IngredientList = ({
 }) => {
   const { ingredients, loading, error, fetchIngredients, removeIngredient } =
     useIngredientStore();
-  const t = useTranslations("IngredientList");
-  const unitsT = useTranslations("Units");
+  const t = useTranslations();
 
   useEffect(() => {
     fetchIngredients();
@@ -155,12 +154,12 @@ const IngredientList = ({
                   }}
                 >
                   <SelectTrigger id="unit" aria-label="Select unit">
-                    <SelectValue placeholder={t("selectUnit")} />
+                    <SelectValue placeholder={t("IngredientList.selectUnit")} />
                   </SelectTrigger>
                   <SelectContent>
                     {UnitArray.map((unit, ui) => (
                       <SelectItem key={["unit", ui].join("-")} value={unit}>
-                        {unitsT(unit)}
+                        {t(`Units.${unit}`)}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -176,13 +175,17 @@ const IngredientList = ({
                   </AlertDialogTrigger>
                   <AlertDialogContent>
                     <AlertDialogHeader>
-                      <AlertDialogTitle>{t("deletedTitle")}</AlertDialogTitle>
+                      <AlertDialogTitle>
+                        {t("IngredientList.deletedTitle")}
+                      </AlertDialogTitle>
                       <AlertDialogDescription>
-                        {t("deletedDescription")}
+                        {t("IngredientList.deletedDescription")}
                       </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
-                      <AlertDialogCancel>{t("cancel")}</AlertDialogCancel>
+                      <AlertDialogCancel>
+                        {t("IngredientList.cancel")}
+                      </AlertDialogCancel>
                       <AlertDialogAction
                         onClick={() =>
                           ingredient.id
@@ -190,7 +193,7 @@ const IngredientList = ({
                             : undefined
                         }
                       >
-                        {t("continue")}
+                        {t("IngredientList.continue")}
                       </AlertDialogAction>
                     </AlertDialogFooter>
                   </AlertDialogContent>
