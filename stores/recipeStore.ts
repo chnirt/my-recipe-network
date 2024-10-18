@@ -30,10 +30,12 @@ export type EditRecipePayload = Recipe;
 type RecipeStore = {
   recipes: Recipe[];
   mappedRecipes: MappedRecipe[];
+  searchedRecipes: MappedRecipe[];
   loading: boolean;
   error: string | null;
   fetchRecipes: (name?: string) => Promise<FetchRecipesResponse>;
   fetchRecipesWithIngredients: () => Promise<void>;
+  searchRecipes: (query: string) => void;
   fetchRecipe: (id: string) => Promise<Recipe | null>;
   addRecipe: (recipe: AddRecipePayload) => Promise<void>;
   editRecipe: (id: string, updatedRecipe: EditRecipePayload) => Promise<void>;
@@ -44,9 +46,10 @@ type RecipeStore = {
   setError: (error: string | null) => void;
 };
 
-const useRecipeStore = create<RecipeStore>((set) => ({
+const useRecipeStore = create<RecipeStore>((set, get) => ({
   recipes: [],
   mappedRecipes: [],
+  searchedRecipes: [],
   loading: false,
   error: null,
 
@@ -102,14 +105,31 @@ const useRecipeStore = create<RecipeStore>((set) => ({
             unit: ingredient.unit,
           };
         });
-        return { ...recipe, ingredients: mappedIngredients };
+        return {
+          ...recipe,
+          ingredients: mappedIngredients,
+        };
       });
 
-      set({ recipes, mappedRecipes });
+      set({ recipes, mappedRecipes, searchedRecipes: mappedRecipes });
     } catch (error: unknown) {
       set({ error: (error as Error).message });
     } finally {
       set({ loading: false });
+    }
+  },
+
+  // Search function to filter recipes by name
+  searchRecipes: (query: string) => {
+    if (query.trim() === "") {
+      // If the query is empty, return all mappedRecipes
+      set({ searchedRecipes: get().mappedRecipes });
+    } else {
+      // Otherwise, filter recipes by the query
+      const filteredRecipes = get().mappedRecipes.filter((recipe) =>
+        recipe.name.toLowerCase().includes(query.toLowerCase()),
+      );
+      set({ searchedRecipes: filteredRecipes });
     }
   },
 
@@ -149,7 +169,7 @@ const useRecipeStore = create<RecipeStore>((set) => ({
       }
 
       // Refetch the recipes list to get the updated data
-      await useRecipeStore.getState().fetchRecipes();
+      await useRecipeStore.getState().fetchRecipesWithIngredients();
     } catch (error: unknown) {
       set({ error: (error as Error).message });
     } finally {
@@ -174,7 +194,7 @@ const useRecipeStore = create<RecipeStore>((set) => ({
       }
 
       // Refetch the recipes list to get the updated data
-      await useRecipeStore.getState().fetchRecipes();
+      await useRecipeStore.getState().fetchRecipesWithIngredients();
     } catch (error: unknown) {
       set({ error: (error as Error).message });
     } finally {
@@ -195,7 +215,7 @@ const useRecipeStore = create<RecipeStore>((set) => ({
       }
 
       // Refetch the recipes list to get the updated data
-      await useRecipeStore.getState().fetchRecipes();
+      await useRecipeStore.getState().fetchRecipesWithIngredients();
     } catch (error: unknown) {
       set({ error: (error as Error).message });
     } finally {

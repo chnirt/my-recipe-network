@@ -4,7 +4,7 @@ import RecipeItem from "./RecipeItem";
 
 export default function RecipeList() {
   const {
-    mappedRecipes,
+    searchedRecipes,
     loading,
     error,
     fetchRecipesWithIngredients,
@@ -20,7 +20,7 @@ export default function RecipeList() {
 
   return (
     <div className="flex flex-col gap-4">
-      {mappedRecipes.map((recipe, index) => (
+      {searchedRecipes.map((recipe, index) => (
         <div key={index}>
           <RecipeItem {...{ recipe, remove: removeRecipe }} />
         </div>

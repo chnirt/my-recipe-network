@@ -34,15 +34,12 @@ export default function Page() {
   // const { addInviteLink } = useInviteLinkStore();
   const [invitationLink, setInvitationLink] = useState("");
   const [copySuccess, setCopySuccess] = useState(false);
+  const { searchRecipes } = useRecipeStore();
 
   useEffect(() => {
     // Create a debounced version of the fetchRecipes function
     const debouncedFetchRecipes = debounce(async (name: string) => {
-      if (name) {
-        await fetchRecipes(name); // Call fetch with search name
-      } else {
-        await fetchRecipes(); // Call fetch to get all recipes
-      }
+      searchRecipes(name);
     }, 300); // Adjust the debounce delay as needed (300ms is common)
 
     // Call the debounced function when the searchName changes
@@ -67,7 +64,7 @@ export default function Page() {
         recipeId,
         inviteLink: generateLink,
       };
-      console.log("🚀 ~ createInvitationLink ~ newInviteLink:", newInviteLink)
+      console.log("🚀 ~ createInvitationLink ~ newInviteLink:", newInviteLink);
       // const inviteLink = await addInviteLink(newInviteLink);
       // setInvitationLink(inviteLink);
       setOpen(true);
