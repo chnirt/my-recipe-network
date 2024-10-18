@@ -91,4 +91,5 @@ export const UnitArray: string[] = [
   "pinch", // Nhúm
   "tablet", // Viên
   "cube", // Viên đá
+  "fruit", // Trái
 ];

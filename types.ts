@@ -8,4 +8,5 @@ export type Unit =
   | "cup" // Cốc
   | "pinch" // Nhúm
   | "tablet" // Viên
-  | "cube";
+  | "cube" // Khối
+  | "fruit"; // Trái

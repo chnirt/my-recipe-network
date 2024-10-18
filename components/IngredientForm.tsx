@@ -27,8 +27,8 @@ import { useTranslations } from "next-intl";
 export const ingredientFormSchema = z.object({
   name: z
     .string()
-    .min(1, "Name is required")
-    .max(30, "Name must not exceed 30 characters"),
+    .min(1, "Ingredient name is required")
+    .max(30, "Ingredient name must be at most 30 characters long"),
 });
 
 const IngredientForm = ({

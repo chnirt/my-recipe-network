@@ -76,3 +76,9 @@ body {
     @apply bg-background text-foreground;
   }
 }
+
+html,
+body {
+  touch-action: manipulation;
+  -ms-touch-action: manipulation; /* for older IE versions */
+}

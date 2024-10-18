@@ -32,12 +32,13 @@ import {
 } from "./ui/form";
 import { useTranslations } from "next-intl";
 import useRecipeStore from "@/stores/recipeStore";
+import { Textarea } from "./ui/textarea";
 
 const ingredientSchema = z.object({
   id: z.string().min(1, "Id is required"),
   quantity: z
     .number()
-    .nonnegative("Quantity must be greater than or equal to 0"), // Số lượng phải là số dương
+    .nonnegative("Quantity must be greater than or equal to 0"), // Quantity must be a non-negative number
   unit: z.enum(
     [
       "ml",
@@ -50,13 +51,22 @@ const ingredientSchema = z.object({
       "pinch",
       "tablet",
       "cube",
+      "fruit",
     ],
-    { invalid_type_error: "Invalid unit" }, // Đơn vị phải nằm trong danh sách định trước
+    { invalid_type_error: "Invalid unit" }, // Unit must be one of the predefined units
   ),
 });
 
 const recipeFormSchema = z.object({
-  name: z.string().min(1, "Recipe name is required"), // Tên recipe không được để trống
+  name: z
+    .string()
+    .min(1, "Recipe name is required") // Recipe name is required
+    .max(30, "Recipe name must be at most 30 characters long"), // Max length for recipe name
+  note: z
+    .string()
+    .min(1, "Note is required") // Note is required
+    .max(200, "Note must be at most 200 characters long") // Max length for note
+    .optional(), // Note is optional
   ingredients: z
     .array(ingredientSchema)
     .min(1, "At least one ingredient is required")
@@ -73,6 +83,7 @@ const recipeFormSchema = z.object({
 const RecipeForm = ({ id }: { id?: string }) => {
   const defaultValues = {
     name: "",
+    note: "",
     ingredients: [],
   };
   const router = useRouter();
@@ -93,6 +104,7 @@ const RecipeForm = ({ id }: { id?: string }) => {
         if (ingredient) {
           form.reset({
             name: ingredient.name,
+            note: ingredient.note,
             ingredients: ingredient.ingredients,
           });
         }
@@ -114,10 +126,11 @@ const RecipeForm = ({ id }: { id?: string }) => {
     // ✅ This will be type-safe and validated.
     // console.log("🚀 ~ onSubmit ~ values:", values);
     const name = values.name;
+    const note = values.note;
     const ingredients = values.ingredients;
 
     try {
-      const newRecipe = { name, ingredients };
+      const newRecipe = { name, note, ingredients };
       if (id) {
         editRecipe(id, newRecipe);
       } else {
@@ -195,6 +208,25 @@ const RecipeForm = ({ id }: { id?: string }) => {
                               type="text"
                               className="w-full"
                               placeholder={t("recipeNamePlaceholder")}
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="note"
+                      render={({ field }) => (
+                        <FormItem className="grid gap-3">
+                          <FormLabel>{t("note")}</FormLabel>
+                          <FormControl>
+                            <Textarea
+                              id="note"
+                              className="min-h-24"
+                              placeholder={t("recipeNotePlaceholder")}
                               {...field}
                             />
                           </FormControl>

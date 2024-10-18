@@ -1,5 +1,11 @@
 import React, { useEffect } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "./ui/card";
 import { Button } from "./ui/button";
 import { Pen, Trash } from "lucide-react";
 import {
@@ -46,6 +52,7 @@ function RecipeItem({
       <CardHeader className="flex flex-row items-center">
         <div className="grid gap-2">
           <CardTitle>{recipe.name}</CardTitle>
+          <CardDescription>{recipe.note}</CardDescription>
         </div>
         <div className="ml-auto flex gap-2">
           <Button variant="ghost" size="icon" className="gap-1" onClick={edit}>

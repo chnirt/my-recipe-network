@@ -4,6 +4,7 @@ import { Ingredient } from "./ingredientStore";
 export type Recipe = {
   id?: string;
   name: string;
+  note?: string;
   ingredients: Ingredient[];
 };
 

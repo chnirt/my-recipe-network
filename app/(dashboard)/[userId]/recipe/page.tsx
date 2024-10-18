@@ -17,7 +17,7 @@ import useInvitationStore from "@/stores/invitationStore";
 import useRecipeStore from "@/stores/recipeStore";
 import { useAuth } from "@clerk/nextjs";
 import { debounce } from "lodash";
-import { Clipboard, ClipboardCheck, PlusCircle, Share } from "lucide-react";
+import { Check, Clipboard, PlusCircle, Share } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
@@ -134,11 +134,11 @@ export default function Page() {
                   onClick={() => copyToClipboard(invitationLink)} // Assuming share is a function that copies the link
                   disabled={copySuccess}
                 >
-                  <span className="sr-only">{t("copy")}</span>
+                  <span className="sr-only">Copy</span>
                   {!copySuccess ? (
                     <Clipboard className="h-4 w-4" />
                   ) : (
-                    <ClipboardCheck className="h-4 w-4" />
+                    <Check className="h-4 w-4" />
                   )}
                 </Button>
               </div>
