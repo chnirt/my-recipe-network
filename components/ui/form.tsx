@@ -147,17 +147,25 @@ const FormMessage = React.forwardRef<
   React.HTMLAttributes<HTMLParagraphElement>
 >(({ className, children, ...props }, ref) => {
   const { error, formMessageId, name } = useFormField()
- // Cast error to any to bypass type-checking issues
- const myError: any = error;
+  let body = error ? String(error?.message) : children
 
- // Determine the message to display
- const body = myError
-   ? myError.message
-     ? String(myError.message)
-     : myError[name]?.message
-     ? String(myError[name]?.message)
-     : children
-   : children;
+  if (error) {
+    type MyError = {
+      message?: string; // The main message property
+      type?: string;    // An optional type property
+    } & {
+      [key: string]: { // Additional properties with a specific structure
+        message?: string; // Each additional property must also include a message
+      };
+    };
+    // Cast error to any to bypass type-checking issues
+    const myError: MyError = error;
+   
+    // Determine the message to display
+    if(myError[name]?.message) {
+      body = String(myError[name]?.message)
+    }
+  }
 
   if (!body) {
     return null
