@@ -2,7 +2,6 @@ import { useEffect } from "react";
 import useIngredientStore, { Ingredient } from "@/stores/ingredientStore";
 import { TableCell, TableRow } from "./ui/table";
 import { Label } from "./ui/label";
-import { Input } from "./ui/input";
 import {
   Select,
   SelectContent,
