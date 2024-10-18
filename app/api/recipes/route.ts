@@ -97,6 +97,7 @@ export async function POST(request: Request) {
     const recipesCollectionRef = collection(db, "recipes");
     const newRecipeRef = await addDoc(recipesCollectionRef, {
       name: data.name,
+      note: data.note,
       ingredients: data.ingredients,
       createdBy: userId,
     });
