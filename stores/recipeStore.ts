@@ -7,6 +7,7 @@ export type Recipe = {
   name: string;
   note?: string;
   ingredients: Ingredient[];
+  createdBy?: string;
 };
 
 // Define the type for the final mapped recipe

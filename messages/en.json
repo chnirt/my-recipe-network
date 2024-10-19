@@ -15,7 +15,8 @@
     "fruit": "fruit"
   },
   "HomePage": {
-    "title": "Hello world!"
+    "title": "Hello world!",
+    "welcome": "Welcome"
   },
   "LocaleSwitcher": {
     "en": "English",

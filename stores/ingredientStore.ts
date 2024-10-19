@@ -6,6 +6,7 @@ export type Ingredient = {
   name?: string;
   quantity?: number;
   unit?: Unit;
+  createdBy?: string;
 };
 
 export type FetchIngredientsResponse = Ingredient[];

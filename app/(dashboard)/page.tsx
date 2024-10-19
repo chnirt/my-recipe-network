@@ -2,27 +2,37 @@
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Card, CardFooter } from "@/components/ui/card";
+import {
+  Card,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import useInviteLinkStore from "@/stores/inviteLinkStore";
-import { useAuth } from "@clerk/nextjs";
-import { CheckIcon } from "lucide-react";
+import useUserStore from "@/stores/userStore";
+import { useAuth, useUser } from "@clerk/nextjs";
+import { Album } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import React, { useEffect } from "react";
 
 export default function Page() {
-  const { isLoaded, userId } = useAuth();
+  const { isSignedIn, isLoaded, userId } = useAuth();
+  const { user } = useUser();
   const { inviteLinksByUserId, fetchInviteLinksByUserId, loading, error } =
     useInviteLinkStore();
   const router = useRouter();
+  const { saveUserData } = useUserStore();
+  const t = useTranslations("HomePage");
 
   useEffect(() => {
-    // Fetch invite links when the component mounts
-    if (userId) {
+    // Save user data when the user is signed in
+    if (isSignedIn && userId) {
+      saveUserData(); // Call to save user data
       fetchInviteLinksByUserId(userId);
     }
-  }, [fetchInviteLinksByUserId, userId]);
-  // const t = useTranslations("HomePage");
+  }, [isSignedIn, userId, saveUserData, fetchInviteLinksByUserId]); // Dependencies to trigger useEffect
 
   function goToRecipe(recipeId: string) {
     router.push(`/${recipeId}/recipe`);
@@ -33,53 +43,58 @@ export default function Page() {
     return null;
   }
 
+  if (!user) {
+    return <div>Loading...</div>;
+  }
+
   if (loading) return <p>Loading...</p>;
   if (error) return <p>{error}</p>;
 
   return (
     <div className="flex flex-col gap-4 px-4 pb-8 pt-4">
+      <Label className="text-base">
+        {t("welcome")},{" "}
+        <strong className="font-bold">
+          {user.firstName} {user.lastName}!
+        </strong>
+      </Label>
       {inviteLinksByUserId.map((link) => (
         <Card key={link.id} className="w-full">
-          <div className="flex items-start gap-4 p-4">
-            <div className="flex items-center justify-center">
-              <Avatar className="h-16 w-16">
-                <AvatarImage src={link.createdBy} alt={link.createdBy} />
-                <AvatarFallback>
-                  {String(link.createdBy).charAt(0)}
-                </AvatarFallback>
-              </Avatar>
-            </div>
-            <div className="flex flex-col gap-2 sm:flex-row">
-              <div className="flex-1">
-                <Label className="font-semibold">{link.createdBy}</Label>
-                <div>
-                  <Label className="text-sm text-muted-foreground">
-                    {/* {post.user.bio} */}
-                  </Label>
-                </div>
-                <div className="mt-1 flex gap-2 text-xs text-muted-foreground">
-                  {/* <Label>{post.user.recipeCount} công thức</Label>
-                  <span>•</span>
-                  <Label>{post.user.expertise}</Label> */}
-                </div>
+          <CardHeader className="flex flex-row items-center gap-2">
+            <div className="flex space-x-2">
+              <div className="flex flex-col justify-center">
+                <Avatar>
+                  <AvatarImage src={link.creatorDetails?.avatar} />
+                  <AvatarFallback>
+                    {String(link.creatorDetails?.firstName)
+                      .toUpperCase()
+                      .charAt(0)}
+                    {String(link.creatorDetails?.lastName)
+                      .toUpperCase()
+                      .charAt(0)}
+                  </AvatarFallback>
+                </Avatar>
               </div>
-              <div className="flex-1">
-                <Label className="mb-2 font-medium">Công thức mới nhất:</Label>
-                {/* <Label className="font-semibold">{post.recipe.title}</Label> */}
-                <Label className="line-clamp-2 text-sm text-muted-foreground">
-                  {/* {post.recipe.description} */}
-                </Label>
+              <div className="flex flex-col justify-center">
+                <CardTitle>
+                  {link.creatorDetails?.firstName}{" "}
+                  {link.creatorDetails?.lastName}
+                </CardTitle>
+                <CardDescription>{link.creatorDetails?.email}</CardDescription>
               </div>
             </div>
-          </div>
-          <CardFooter>
-            <Button
-              className="w-full"
-              onClick={() => goToRecipe(link.recipeId)}
-            >
-              <CheckIcon /> View
-            </Button>
-          </CardFooter>
+            <div className="ml-auto">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="gap-1"
+                onClick={() => goToRecipe(link.recipeId)}
+              >
+                <Album className="size-4" />
+                <span className="sr-only">Pen</span>
+              </Button>
+            </div>
+          </CardHeader>
         </Card>
       ))}
     </div>

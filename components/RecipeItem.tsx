@@ -52,12 +52,12 @@ export default function RecipeItem({
   return (
     <Card className="xl:col-span-2" x-chunk="dashboard-01-chunk-4">
       <CardHeader className="flex flex-row items-center">
-        <div className="grid gap-2">
+        <div className="flex flex-col justify-center">
           <CardTitle>{recipe.name}</CardTitle>
           <CardDescription>{recipe.note}</CardDescription>
         </div>
         {isOwner ? (
-          <div className="ml-auto flex gap-2">
+          <div className="ml-auto space-x-2">
             <Button
               variant="ghost"
               size="icon"

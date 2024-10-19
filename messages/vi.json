@@ -15,7 +15,8 @@
     "fruit": "trái"
   },
   "HomePage": {
-    "title": "Xin chào!"
+    "title": "Xin chào thế giới!",
+    "welcome": "Chào mừng"
   },
   "LocaleSwitcher": {
     "en": "English",
