@@ -20,9 +20,9 @@ import { debounce } from "lodash";
 import { Check, Clipboard, PlusCircle, Share } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 
-export default function Page() {
+export default function Page({ params }: { params: { userId: string } }) {
   const router = useRouter();
   const t = useTranslations("Collection");
   const { userId } = useAuth();
@@ -33,6 +33,8 @@ export default function Page() {
   const [inviteLink, setInviteLink] = useState("");
   const [copySuccess, setCopySuccess] = useState(false);
   const { searchRecipes } = useRecipeStore();
+
+  const isOwner = useMemo(() => userId === params.userId, [userId, params]);
 
   useEffect(() => {
     // Create a debounced version of the fetchRecipes function
@@ -97,71 +99,73 @@ export default function Page() {
             className="max-w-sm"
           />
         </div>
-        <div className="ml-auto flex items-center gap-2">
-          <Dialog {...{ open, onOpenChange: handleOnOpenChange }}>
-            <Button
-              size="sm"
-              variant="outline"
-              className="h-7 gap-1"
-              onClick={createInviteLink}
-            >
-              <Share className="h-3.5 w-3.5" />
+        {isOwner ? (
+          <div className="ml-auto flex items-center gap-2">
+            <Dialog {...{ open, onOpenChange: handleOnOpenChange }}>
+              <Button
+                size="sm"
+                variant="outline"
+                className="h-7 gap-1"
+                onClick={createInviteLink}
+              >
+                <Share className="h-3.5 w-3.5" />
+                <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
+                  {t("share")}
+                </span>
+              </Button>
+              <DialogContent className="sm:max-w-md">
+                <DialogHeader>
+                  <DialogTitle>{t("shareTitle")}</DialogTitle>
+                  <DialogDescription>{t("shareDescription")}</DialogDescription>
+                </DialogHeader>
+                <div className="flex items-center space-x-2">
+                  <div className="grid flex-1 gap-2">
+                    <Label htmlFor="link" className="sr-only">
+                      {inviteLink}
+                    </Label>
+                    <Input
+                      id="link"
+                      defaultValue={inviteLink} // Replace with your dynamic invitation link
+                      readOnly
+                    />
+                  </div>
+                  <Button
+                    type="button"
+                    size="sm"
+                    className="px-3"
+                    onClick={() => copyToClipboard(inviteLink)} // Assuming share is a function that copies the link
+                    disabled={copySuccess}
+                  >
+                    <span className="sr-only">Copy</span>
+                    {!copySuccess ? (
+                      <Clipboard className="h-4 w-4" />
+                    ) : (
+                      <Check className="h-4 w-4" />
+                    )}
+                  </Button>
+                </div>
+                <DialogFooter className="sm:justify-start">
+                  <DialogClose asChild>
+                    <Button type="button" variant="secondary">
+                      {t("close")}
+                    </Button>
+                  </DialogClose>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+
+            <Button size="sm" className="h-7 gap-1" onClick={add}>
+              <PlusCircle className="h-3.5 w-3.5" />
               <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-                {t("share")}
+                {t("add")}
               </span>
             </Button>
-            <DialogContent className="sm:max-w-md">
-              <DialogHeader>
-                <DialogTitle>{t("shareTitle")}</DialogTitle>
-                <DialogDescription>{t("shareDescription")}</DialogDescription>
-              </DialogHeader>
-              <div className="flex items-center space-x-2">
-                <div className="grid flex-1 gap-2">
-                  <Label htmlFor="link" className="sr-only">
-                    {inviteLink}
-                  </Label>
-                  <Input
-                    id="link"
-                    defaultValue={inviteLink} // Replace with your dynamic invitation link
-                    readOnly
-                  />
-                </div>
-                <Button
-                  type="button"
-                  size="sm"
-                  className="px-3"
-                  onClick={() => copyToClipboard(inviteLink)} // Assuming share is a function that copies the link
-                  disabled={copySuccess}
-                >
-                  <span className="sr-only">Copy</span>
-                  {!copySuccess ? (
-                    <Clipboard className="h-4 w-4" />
-                  ) : (
-                    <Check className="h-4 w-4" />
-                  )}
-                </Button>
-              </div>
-              <DialogFooter className="sm:justify-start">
-                <DialogClose asChild>
-                  <Button type="button" variant="secondary">
-                    {t("close")}
-                  </Button>
-                </DialogClose>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
-
-          <Button size="sm" className="h-7 gap-1" onClick={add}>
-            <PlusCircle className="h-3.5 w-3.5" />
-            <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-              {t("add")}
-            </span>
-          </Button>
-        </div>
+          </div>
+        ) : null}
       </div>
 
       <div className="flex-1 px-4 pb-8">
-        <RecipeList />
+        <RecipeList {...{ id: params.userId, isOwner }} />
       </div>
     </div>
   );

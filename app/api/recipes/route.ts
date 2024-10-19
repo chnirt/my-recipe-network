@@ -8,21 +8,22 @@ import {
   handleErrorAndRespond,
 } from "@/lib/apiUtils";
 
-// GET function to retrieve all recipes for the authenticated user with optional search
+// GET function to retrieve all recipes for a specified user or the authenticated user, with optional search
 export async function GET(request: Request) {
   try {
-    // Ensure user is authenticated
-    const userId = authenticateUser();
+    // Ensure the user is authenticated
+    const authenticatedUserId = authenticateUser();
 
-    // Get the search parameter from the request URL
+    // Get the search parameters from the request URL
     const url = new URL(request.url);
     const searchName = url.searchParams.get("search") || ""; // Default to an empty string if not provided
+    const targetUserId = url.searchParams.get("userId") || authenticatedUserId; // Use authenticated user if userId is not provided
 
-    // Fetch all recipes created by the user
+    // Fetch all recipes created by the target user (specified or authenticated)
     const recipesCollectionRef = collection(db, "recipes");
     const recipesQuery = query(
       recipesCollectionRef,
-      where("createdBy", "==", userId),
+      where("createdBy", "==", targetUserId),
     );
     const snapshot = await getDocs(recipesQuery);
 

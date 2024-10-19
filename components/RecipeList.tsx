@@ -2,7 +2,13 @@ import React, { useEffect } from "react";
 import useRecipeStore from "@/stores/recipeStore";
 import RecipeItem from "./RecipeItem";
 
-export default function RecipeList() {
+export default function RecipeList({
+  id,
+  isOwner,
+}: {
+  id: string;
+  isOwner: boolean;
+}) {
   const {
     searchedRecipes,
     loading,
@@ -12,7 +18,7 @@ export default function RecipeList() {
   } = useRecipeStore();
 
   useEffect(() => {
-    fetchRecipesWithIngredients();
+    fetchRecipesWithIngredients(id);
   }, [fetchRecipesWithIngredients]);
 
   if (loading) return <p>Loading...</p>;
@@ -22,7 +28,7 @@ export default function RecipeList() {
     <div className="flex flex-col gap-4">
       {searchedRecipes.map((recipe, index) => (
         <div key={index}>
-          <RecipeItem {...{ recipe, remove: removeRecipe }} />
+          <RecipeItem {...{ recipe, remove: removeRecipe, isOwner }} />
         </div>
       ))}
     </div>

@@ -266,7 +266,7 @@ const RecipeForm = ({ id }: { id?: string }) => {
                               </TableHead>
                             </TableRow>
                           </TableHeader>
-                          <TableBody>
+                          <TableBody className="block overflow-y-auto">
                             <IngredientList
                               {...{
                                 defaultValue: ingredients,

@@ -15,19 +15,23 @@ export type InviteLink = {
 
 type InviteLinkStore = {
   inviteLinks: InviteLink[];
+  inviteLinksByUserId: InviteLink[];
   loading: boolean;
   error: string | null;
   addInviteLink: (recipeId: string) => Promise<string | null>;
   fetchInviteLinks: () => Promise<void>;
+  fetchInviteLinksByUserId: (userId: string) => Promise<void>;
   acceptInvite: (inviteLinkId: string) => Promise<void>;
   revokeAccess: (inviteLinkId: string, userId: string) => Promise<void>;
   setInviteLinks: (inviteLinks: InviteLink[]) => void;
+  setInviteLinksByUserId: (inviteLinks: InviteLink[]) => void;
   setLoading: (loading: boolean) => void;
   setError: (error: string | null) => void;
 };
 
 const useInviteLinkStore = create<InviteLinkStore>((set) => ({
   inviteLinks: [],
+  inviteLinksByUserId: [],
   loading: false,
   error: null,
 
@@ -72,6 +76,24 @@ const useInviteLinkStore = create<InviteLinkStore>((set) => ({
     } catch (error: unknown) {
       set({ error: (error as Error).message });
       console.error("Error fetching invite links:", error);
+    } finally {
+      set({ loading: false });
+    }
+  },
+
+  // Fetch invite links by userId from invitedUsers
+  fetchInviteLinksByUserId: async (userId: string) => {
+    set({ loading: true, error: null });
+    try {
+      const response = await fetch(`/api/inviteLinks/invited?userId=${userId}`);
+      if (!response.ok) {
+        throw new Error("Failed to fetch invite links for the user");
+      }
+
+      const data: InviteLink[] = await response.json();
+      set({ inviteLinksByUserId: data }); // Update the state for invite links by user ID
+    } catch (error: unknown) {
+      set({ error: (error as Error).message });
     } finally {
       set({ loading: false });
     }
@@ -126,6 +148,8 @@ const useInviteLinkStore = create<InviteLinkStore>((set) => ({
 
   // Setters
   setInviteLinks: (inviteLinks: InviteLink[]) => set({ inviteLinks }),
+  setInviteLinksByUserId: (inviteLinks: InviteLink[]) =>
+    set({ inviteLinksByUserId: inviteLinks }),
   setLoading: (loading: boolean) => set({ loading }),
   setError: (error: string | null) => set({ error }),
 }));

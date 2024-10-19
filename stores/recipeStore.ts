@@ -34,7 +34,7 @@ type RecipeStore = {
   loading: boolean;
   error: string | null;
   fetchRecipes: (name?: string) => Promise<FetchRecipesResponse>;
-  fetchRecipesWithIngredients: () => Promise<void>;
+  fetchRecipesWithIngredients: (userId?: string) => Promise<void>;
   searchRecipes: (query: string) => void;
   fetchRecipe: (id: string) => Promise<Recipe | null>;
   addRecipe: (recipe: AddRecipePayload) => Promise<void>;
@@ -75,16 +75,18 @@ const useRecipeStore = create<RecipeStore>((set, get) => ({
   },
 
   // Fetch both recipes and ingredients, then map them
-  fetchRecipesWithIngredients: async () => {
+  fetchRecipesWithIngredients: async (userId) => {
     set({ loading: true, error: null });
     try {
       // Fetch both recipes and ingredients
-      const fetchRecipesPromise = fetch("/api/recipes");
+      const fetchRecipesPromise = fetch(
+        userId ? `/api/recipes?userId=${userId}` : "/api/recipes",
+      );
       const fetchIngredientsPromise = useIngredientStore
         .getState()
-        .fetchIngredients();
+        .fetchIngredients(userId);
 
-      const [recipesResponse, ingredientsResponse] = await Promise.all([
+      const [recipesResponse] = await Promise.all([
         fetchRecipesPromise,
         fetchIngredientsPromise,
       ]);

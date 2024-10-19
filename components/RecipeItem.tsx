@@ -35,9 +35,11 @@ import {
 export default function RecipeItem({
   recipe,
   remove,
+  isOwner,
 }: {
   recipe: Recipe;
   remove: (id: string) => Promise<void>;
+  isOwner: boolean;
 }) {
   const t = useTranslations();
   const router = useRouter();
@@ -54,39 +56,48 @@ export default function RecipeItem({
           <CardTitle>{recipe.name}</CardTitle>
           <CardDescription>{recipe.note}</CardDescription>
         </div>
-        <div className="ml-auto flex gap-2">
-          <Button variant="ghost" size="icon" className="gap-1" onClick={edit}>
-            <Pen className="size-4" />
-            <span className="sr-only">Pen</span>
-          </Button>
+        {isOwner ? (
+          <div className="ml-auto flex gap-2">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="gap-1"
+              onClick={edit}
+            >
+              <Pen className="size-4" />
+              <span className="sr-only">Pen</span>
+            </Button>
 
-          <AlertDialog>
-            <AlertDialogTrigger asChild>
-              <Button variant="ghost" size="icon" className="gap-1">
-                <Trash className="size-4" />
-                <span className="sr-only">Trash</span>
-              </Button>
-            </AlertDialogTrigger>
-            <AlertDialogContent>
-              <AlertDialogHeader>
-                <AlertDialogTitle>
-                  {t("RecipeItem.deletedTitle")}
-                </AlertDialogTitle>
-                <AlertDialogDescription>
-                  {t("RecipeItem.deletedDescription")}
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogCancel>{t("RecipeItem.cancel")}</AlertDialogCancel>
-                <AlertDialogAction
-                  onClick={() => (recipe.id ? remove(recipe.id) : undefined)}
-                >
-                  {t("RecipeItem.continue")}
-                </AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
-        </div>
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button variant="ghost" size="icon" className="gap-1">
+                  <Trash className="size-4" />
+                  <span className="sr-only">Trash</span>
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>
+                    {t("RecipeItem.deletedTitle")}
+                  </AlertDialogTitle>
+                  <AlertDialogDescription>
+                    {t("RecipeItem.deletedDescription")}
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>
+                    {t("RecipeItem.cancel")}
+                  </AlertDialogCancel>
+                  <AlertDialogAction
+                    onClick={() => (recipe.id ? remove(recipe.id) : undefined)}
+                  >
+                    {t("RecipeItem.continue")}
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          </div>
+        ) : null}
       </CardHeader>
       <CardContent>
         <Table>

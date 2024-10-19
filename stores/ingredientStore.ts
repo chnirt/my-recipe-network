@@ -16,7 +16,7 @@ type IngredientStore = {
   ingredients: Ingredient[];
   loading: boolean;
   error: string | null;
-  fetchIngredients: () => Promise<FetchIngredientsResponse>;
+  fetchIngredients: (userId?: string) => Promise<FetchIngredientsResponse>;
   fetchIngredient: (id: string) => Promise<Ingredient | null>;
   addIngredient: (ingredient: AddIngredientPayload) => Promise<void>;
   editIngredient: (
@@ -34,10 +34,12 @@ const useIngredientStore = create<IngredientStore>((set) => ({
   loading: false,
   error: null,
 
-  fetchIngredients: async () => {
+  fetchIngredients: async (userId) => {
     set({ loading: true, error: null });
     try {
-      const response = await fetch("/api/ingredients");
+      const response = await fetch(
+        userId ? `/api/ingredients?userId=${userId}` : "/api/ingredients",
+      );
       const data: FetchIngredientsResponse = await response.json();
       set({ ingredients: data });
       return data; // Return the fetched ingredients
