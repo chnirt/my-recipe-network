@@ -85,7 +85,6 @@ export default function Page() {
             </div>
             <div className="ml-auto">
               <Button
-                variant="ghost"
                 size="icon"
                 className="gap-1"
                 onClick={() => goToRecipe(link.recipeId)}

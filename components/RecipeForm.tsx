@@ -241,7 +241,7 @@ const RecipeForm = ({ id }: { id?: string }) => {
               </Card>
               <Card x-chunk="dashboard-07-chunk-1">
                 <CardHeader>
-                  <CardTitle>{t("ingredients")}</CardTitle>
+                  <CardTitle>{t("listOfIngredients")}</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <FormField
@@ -252,21 +252,15 @@ const RecipeForm = ({ id }: { id?: string }) => {
                         <Table>
                           <TableHeader>
                             <TableRow>
-                              <TableHead className="w-[100px] sm:w-full">
-                                {t("ingredient")}
-                              </TableHead>
-                              <TableHead className="w-[300px]">
-                                {t("quantity")}
-                              </TableHead>
-                              <TableHead className="w-[100px]">
-                                {t("unit")}
-                              </TableHead>
+                              <TableHead>{t("ingredient")}</TableHead>
+                              <TableHead>{t("quantity")}</TableHead>
+                              <TableHead>{t("unit")}</TableHead>
                               <TableHead>
                                 <span className="sr-only">Actions</span>
                               </TableHead>
                             </TableRow>
                           </TableHeader>
-                          <TableBody className="block overflow-y-auto">
+                          <TableBody className="overflow-y-auto">
                             <IngredientList
                               {...{
                                 defaultValue: ingredients,

@@ -54,7 +54,7 @@
     "recipeNamePlaceholder": "Enter recipe name",
     "note": "Note",
     "recipeNotePlaceholder": "Enter recipe note",
-    "ingredients": "Ingredients",
+    "listOfIngredients": "List of ingredients",
     "ingredient": "Ingredient",
     "quantity": "Quantity",
     "unit": "Unit",
