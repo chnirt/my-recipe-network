@@ -13,8 +13,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-// import useInvitationStore from "@/stores/invitationStore";
-// import useInviteLinkStore from "@/stores/inviteLinkStore";
+import useInviteLinkStore from "@/stores/inviteLinkStore";
 import useRecipeStore from "@/stores/recipeStore";
 import { useAuth } from "@clerk/nextjs";
 import { debounce } from "lodash";
@@ -30,9 +29,8 @@ export default function Page() {
   const [searchName, setSearchName] = useState("");
   const { fetchRecipes } = useRecipeStore();
   const [open, setOpen] = useState(false);
-  // const { addInvitation } = useInvitationStore();
-  // const { addInviteLink } = useInviteLinkStore();
-  const [invitationLink, setInvitationLink] = useState("");
+  const { addInviteLink } = useInviteLinkStore();
+  const [inviteLink, setInviteLink] = useState("");
   const [copySuccess, setCopySuccess] = useState(false);
   const { searchRecipes } = useRecipeStore();
 
@@ -51,23 +49,16 @@ export default function Page() {
     };
   }, [fetchRecipes, searchName]); // Add fetchRecipes to dependencies
 
-  async function createInvitationLink() {
+  async function createInviteLink() {
     const recipeId = userId;
     if (recipeId) {
-      // const invitation = await addInvitation({ recipeId });
-      // const invitationId = invitation.id;
-      // const fullUrl: string = `${window.location.origin}/accept-invitation/${invitationId}`;
-      // addInvitation(newInviteLink);
-      // setInvitationLink(fullUrl);
-      const generateLink: string = `${window.location.origin}/accept-invite/${recipeId}`;
-      const newInviteLink = {
-        recipeId,
-        inviteLink: generateLink,
-      };
-      console.log("🚀 ~ createInvitationLink ~ newInviteLink:", newInviteLink);
-      // const inviteLink = await addInviteLink(newInviteLink);
-      // setInvitationLink(inviteLink);
-      setOpen(true);
+      const result = await addInviteLink(recipeId);
+      const inviteLinkId = result;
+      const generatedInviteLink: string = `${window.location.origin}/accept-invite/${inviteLinkId}`;
+      if (result) {
+        setInviteLink(generatedInviteLink);
+        setOpen(true);
+      }
     }
   }
 
@@ -91,7 +82,7 @@ export default function Page() {
     // console.log("🚀 ~ handleOnOpenChange ~ open:", openProp);
     if (!openProp) {
       setCopySuccess(false);
-      setInvitationLink("");
+      setInviteLink("");
     }
   }
 
@@ -112,7 +103,7 @@ export default function Page() {
               size="sm"
               variant="outline"
               className="h-7 gap-1"
-              onClick={createInvitationLink}
+              onClick={createInviteLink}
             >
               <Share className="h-3.5 w-3.5" />
               <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
@@ -127,11 +118,11 @@ export default function Page() {
               <div className="flex items-center space-x-2">
                 <div className="grid flex-1 gap-2">
                   <Label htmlFor="link" className="sr-only">
-                    {invitationLink}
+                    {inviteLink}
                   </Label>
                   <Input
                     id="link"
-                    defaultValue={invitationLink} // Replace with your dynamic invitation link
+                    defaultValue={inviteLink} // Replace with your dynamic invitation link
                     readOnly
                   />
                 </div>
@@ -139,7 +130,7 @@ export default function Page() {
                   type="button"
                   size="sm"
                   className="px-3"
-                  onClick={() => copyToClipboard(invitationLink)} // Assuming share is a function that copies the link
+                  onClick={() => copyToClipboard(inviteLink)} // Assuming share is a function that copies the link
                   disabled={copySuccess}
                 >
                   <span className="sr-only">Copy</span>

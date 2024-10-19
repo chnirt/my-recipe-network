@@ -1,69 +1,72 @@
+import { NextRequest } from "next/server";
+import { collection, addDoc, query, where, getDocs } from "firebase/firestore";
 import { db } from "@/firebase/firebaseConfig";
-import { collection, addDoc, getDocs, query, where } from "firebase/firestore";
 import {
   authenticateUser,
   createResponse,
   handleErrorAndRespond,
 } from "@/lib/apiUtils";
 
-// POST function to create a new invite link or return existing one
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
   const data = await request.json();
 
   try {
-    // Ensure user is authenticated
-    const userId = authenticateUser();
+    const userId = authenticateUser(); // Ensure user is authenticated
 
-    // Check if the invite link already exists
+    // Check if an invite link for this recipe already exists
     const inviteLinksCollectionRef = collection(db, "inviteLinks");
     const existingInviteLinkQuery = query(
       inviteLinksCollectionRef,
       where("recipeId", "==", data.recipeId),
-      where("inviteLink", "==", data.inviteLink),
     );
     const existingInviteLinkSnapshot = await getDocs(existingInviteLinkQuery);
 
     if (!existingInviteLinkSnapshot.empty) {
-      // If the invite link exists, return it
-      const existingInviteLink = existingInviteLinkSnapshot.docs[0].data();
-      return createResponse(existingInviteLink.inviteLink, 200);
+      // If the invite link exists, return the existing invite link ID
+      const existingInviteLinkId = existingInviteLinkSnapshot.docs[0].id;
+      return createResponse({ inviteLinkId: existingInviteLinkId }, 200);
     }
 
     // Create a new invite link if it does not exist
-    await addDoc(inviteLinksCollectionRef, {
+    const newInviteLinkRef = await addDoc(inviteLinksCollectionRef, {
       recipeId: data.recipeId,
-      inviteLink: data.inviteLink,
-      invitedUsers: [], // Start with an empty invitedUsers array
+      invitedUsers: [],
       createdAt: new Date().toISOString(),
-      createdBy: userId, // Optionally store the user who created the invite link
+      createdBy: userId,
     });
 
-    return createResponse(data.inviteLink, 201); // Return the invite link
+    // Return the newly created inviteLinkId
+    return createResponse({ inviteLinkId: newInviteLinkRef.id }, 201);
   } catch (error: unknown) {
-    return handleErrorAndRespond(error);
+    return handleErrorAndRespond(error); // Use the utility function for error handling
   }
 }
 
-// GET function to retrieve all invite links for the authenticated user
-export async function GET(request: Request) {
-  console.log("🚀 ~ GET ~ request:", request)
+export async function GET(request: NextRequest) {
   try {
-    const userId = authenticateUser();
+    const userId = authenticateUser(); // Ensure the user is authenticated
 
+    // Reference to the inviteLinks collection
     const inviteLinksCollectionRef = collection(db, "inviteLinks");
+
+    // Create a query to fetch invite links created by the authenticated user
     const inviteLinksQuery = query(
       inviteLinksCollectionRef,
-      where("userId", "==", userId),
+      where("createdBy", "==", userId),
     );
-    const snapshot = await getDocs(inviteLinksQuery);
 
-    const inviteLinks = snapshot.docs.map((doc) => ({
+    // Fetch the invite links
+    const inviteLinksSnapshot = await getDocs(inviteLinksQuery);
+
+    // Map the data to an array of invite links
+    const inviteLinks = inviteLinksSnapshot.docs.map((doc) => ({
       id: doc.id,
       ...doc.data(),
     }));
 
+    // Return the invite links data
     return createResponse(inviteLinks, 200);
-  } catch (error: unknown) {
+  } catch (error) {
     return handleErrorAndRespond(error);
   }
 }
