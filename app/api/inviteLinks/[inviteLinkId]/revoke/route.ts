@@ -13,7 +13,7 @@ export async function DELETE(
 ) {
   try {
     // Ensure the user is authenticated
-    const userId = authenticateUser();
+    authenticateUser();
 
     // Extract the target userId from query parameters
     const url = new URL(request.url);

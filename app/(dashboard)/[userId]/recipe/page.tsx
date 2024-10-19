@@ -47,7 +47,7 @@ export default function Page() {
     return () => {
       debouncedFetchRecipes.cancel();
     };
-  }, [fetchRecipes, searchName]); // Add fetchRecipes to dependencies
+  }, [fetchRecipes, searchRecipes, searchName]); // Add fetchRecipes to dependencies
 
   async function createInviteLink() {
     const recipeId = userId;

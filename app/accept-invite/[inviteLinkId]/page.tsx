@@ -20,7 +20,7 @@ const AcceptInvitePage = ({ params }: { params: { inviteLinkId: string } }) => {
         })
         .catch(() => setLoading(false));
     }
-  }, [inviteLinkId]);
+  }, [inviteLinkId, acceptInvite, router]);
 
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error}</div>;
