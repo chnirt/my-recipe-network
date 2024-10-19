@@ -33,6 +33,9 @@ export default function Page() {
     return null;
   }
 
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>{error}</p>;
+
   return (
     <div className="flex flex-col gap-4 px-4 pb-8 pt-4">
       {inviteLinksByUserId.map((link) => (
