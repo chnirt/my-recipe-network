@@ -32,7 +32,7 @@ type IngredientStore = {
 
 const useIngredientStore = create<IngredientStore>((set) => ({
   ingredients: [],
-  loading: false,
+  loading: true,
   error: null,
 
   fetchIngredients: async (userId) => {

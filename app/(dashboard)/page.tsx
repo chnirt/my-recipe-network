@@ -1,14 +1,14 @@
 "use client";
 
+import ButtonLoading from "@/components/ButtonLoading";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
 import {
   Card,
   CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
+import Typography from "@/components/ui/typography";
 import useInviteLinkStore from "@/stores/inviteLinkStore";
 import useUserStore from "@/stores/userStore";
 import { useAuth, useUser } from "@clerk/nextjs";
@@ -16,6 +16,8 @@ import { Album } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import React, { useEffect } from "react";
+import Loading from "./loading";
+import { useGreeting } from "@/hooks/useGreeting";
 
 export default function Page() {
   const { isSignedIn, isLoaded, userId } = useAuth();
@@ -25,6 +27,7 @@ export default function Page() {
   const router = useRouter();
   const { saveUserData } = useUserStore();
   const t = useTranslations("HomePage");
+  const greeting = useGreeting();
 
   useEffect(() => {
     // Save user data when the user is signed in
@@ -43,26 +46,28 @@ export default function Page() {
     return null;
   }
 
-  if (!user) {
-    return <div>Loading...</div>;
-  }
-
-  if (loading) return <p>Loading...</p>;
+  if (!user || loading) return <Loading />;
   if (error) return <p>{error}</p>;
 
   return (
     <div className="flex flex-col gap-4 px-4 pb-8 pt-4">
-      <Label className="text-base">
-        {t("welcome")},{" "}
-        <strong className="font-bold">
-          {user.firstName} {user.lastName}!
-        </strong>
-      </Label>
+      <div>
+        <Typography variant={"p"}>
+          {greeting}{", "}
+          <Typography variant={"p"} className="font-bold">
+            {user.firstName} {user.lastName}
+          </Typography>
+        </Typography>
+      </div>
+      <div>
+        <Typography variant={"h4"}>{t("bartenderBaristaRecipe")}</Typography>
+      </div>
+
       {inviteLinksByUserId.map((link) => (
-        <Card key={link.id} className="w-full">
-          <CardHeader className="flex flex-row items-center gap-2">
-            <div className="flex space-x-2">
-              <div className="flex flex-col justify-center">
+        <Card key={link.id}>
+          <CardHeader className="flex flex-row">
+            <div className="flex w-full flex-1 gap-2">
+              <div className="flex-col justify-center">
                 <Avatar>
                   <AvatarImage src={link.creatorDetails?.avatar} />
                   <AvatarFallback>
@@ -75,23 +80,24 @@ export default function Page() {
                   </AvatarFallback>
                 </Avatar>
               </div>
-              <div className="flex flex-col justify-center">
-                <CardTitle>
+              <div className="flex flex-col justify-center overflow-hidden">
+                <CardTitle className="overflow-hidden text-ellipsis whitespace-nowrap">
                   {link.creatorDetails?.firstName}{" "}
                   {link.creatorDetails?.lastName}
                 </CardTitle>
-                <CardDescription>{link.creatorDetails?.email}</CardDescription>
+                <CardDescription className="overflow-hidden text-ellipsis whitespace-nowrap">
+                  {link.creatorDetails?.email}
+                </CardDescription>
               </div>
-            </div>
-            <div className="ml-auto">
-              <Button
-                size="icon"
-                className="gap-1"
-                onClick={() => goToRecipe(link.recipeId)}
-              >
-                <Album className="size-4" />
-                <span className="sr-only">Pen</span>
-              </Button>
+
+              <div className="ml-auto">
+                <ButtonLoading
+                  icon={<Album className="size-4" />}
+                  onClick={() => goToRecipe(link.recipeId)}
+                >
+                  {t("view")}
+                </ButtonLoading>
+              </div>
             </div>
           </CardHeader>
         </Card>

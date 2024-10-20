@@ -51,7 +51,7 @@ const useRecipeStore = create<RecipeStore>((set, get) => ({
   recipes: [],
   mappedRecipes: [],
   searchedRecipes: [],
-  loading: false,
+  loading: true,
   error: null,
 
   // Fetch all recipes from the API, optionally filtered by name

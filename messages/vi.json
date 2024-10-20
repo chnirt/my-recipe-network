@@ -1,6 +1,12 @@
 {
   "greeting": "Xin chào",
   "farewell": "Tạm biệt",
+  "Greeting": {
+    "morning": "Chào buổi sáng",
+    "afternoon": "Chào buổi chiều",
+    "evening": "Chào buổi tối",
+    "night": "Chúc ngủ ngon"
+  },
   "Units": {
     "ml": "ml",
     "gram": "gram",
@@ -16,7 +22,9 @@
   },
   "HomePage": {
     "title": "Xin chào thế giới!",
-    "welcome": "Chào mừng"
+    "welcome": "Chào mừng",
+    "bartenderBaristaRecipe": "Công thức của Người pha chế rượu/cà phê",
+    "view": "Xem"
   },
   "LocaleSwitcher": {
     "en": "English",
@@ -32,7 +40,7 @@
     "share": "Chia sẻ",
     "add": "Thêm",
     "shareTitle": "Chia sẻ liên kết công thức của bạn",
-    "shareDescription": "Bất kỳ ai có liên kết này đều có thể tham khảo công thức của bạn và tận hưởng sự kỳ diệu của ẩm thực!",
+    "shareDescription": "Bất kỳ ai có liên kết này đều có thể tham khảo công thức của bạn và tận hưởng sự kỳ diệu!",
     "copy": "Sao chép",
     "close": "Đóng"
   },

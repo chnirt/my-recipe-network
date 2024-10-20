@@ -15,7 +15,7 @@ type UserStore = {
   loading: boolean; // Loading state
   error: string | null; // Error state
   saveUserData: () => Promise<void>; // Function to save user data
-  fetchUsers: () => Promise<any[]>; // New fetchUsers function
+  fetchUsers: () => Promise<User[]>; // New fetchUsers function
   clearUser: () => void; // Function to clear user data
   setUser: (user: User) => void; // Function to set user data
   setLoading: (loading: boolean) => void; // Function to set loading state
@@ -25,7 +25,7 @@ type UserStore = {
 const useUserStore = create<UserStore>((set) => ({
   user: null,
   users: [],
-  loading: false,
+  loading: true,
   error: null,
 
   // Save user data after logging in

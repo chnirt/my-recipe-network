@@ -2,7 +2,7 @@
 
 import { SignedIn, useAuth, UserButton } from "@clerk/nextjs";
 import React, { useCallback, useEffect } from "react";
-import { GlassWater, Settings2, Triangle } from "lucide-react";
+import { GlassWater, Home, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Tooltip,
@@ -40,7 +40,7 @@ function Navbar() {
           aria-label="Home"
           onClick={goToHome}
         >
-          <Triangle className="size-5 fill-foreground" />
+          <Home className="size-5" />
         </Button>
       </div>
       <nav className="grid gap-1 p-2">
@@ -75,7 +75,7 @@ function Navbar() {
               aria-label="Settings"
               onClick={goToSettings}
             >
-              <Settings2 className="size-5" />
+              <Settings className="size-5" />
             </Button>
           </TooltipTrigger>
           <TooltipContent side="right" sideOffset={5}>
@@ -102,14 +102,14 @@ export default function Layout({
   children: React.ReactNode;
 }>) {
   return (
-    <div className="grid h-screen w-full pl-[57px]">
+    <div className="flex h-screen w-full pl-[57px]">
       <Navbar />
-      <div className="flex flex-col">
-        <header className="sticky top-0 z-20 flex h-[53px] items-center gap-1 border-b bg-background px-4">
-          {/* <h1 className="text-xl font-semibold">Recipe Network</h1> */}
+      <div className="flex w-full flex-col pt-[53px]">
+        <header className="fixed top-0 z-20 flex h-[53px] w-full items-center gap-1 border-b bg-background px-4">
+          <h1 className="text-xl font-semibold">Recipe Network</h1>
         </header>
 
-        <main className="grid flex-1 items-start">{children}</main>
+        <main>{children}</main>
       </div>
     </div>
   );

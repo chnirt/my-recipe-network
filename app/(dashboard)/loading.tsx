@@ -3,12 +3,18 @@ import React from "react";
 
 export default function Loading() {
   return (
-    <div className="flex items-center space-x-4">
-      <Skeleton className="h-12 w-12 rounded-full" />
-      <div className="space-y-2">
-        <Skeleton className="h-4 w-[250px]" />
-        <Skeleton className="h-4 w-[200px]" />
-      </div>
+    <div className="flex w-full flex-col gap-4 px-4 pb-8 pt-4">
+      <Skeleton className="h-7 w-60" />
+      <Skeleton className="h-7 w-full sm:w-96" />
+
+      {Array(3)
+        .fill(null)
+        .map((_, i) => (
+          <Skeleton
+            key={["inviteLinksByUserId", i].join("-")}
+            className="h-20 w-full"
+          />
+        ))}
     </div>
   );
 }

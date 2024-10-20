@@ -89,7 +89,7 @@ export default function Page({ params }: { params: { userId: string } }) {
   }
 
   return (
-    <div className="relative flex min-h-full flex-col">
+    <div className="flex flex-col">
       <div className="sticky top-[53px] z-10 flex items-center gap-4 border-border/40 bg-background/95 p-4 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="w-full">
           <Input
@@ -164,7 +164,7 @@ export default function Page({ params }: { params: { userId: string } }) {
         ) : null}
       </div>
 
-      <div className="flex-1 px-4 pb-8">
+      <div className="px-4 pb-8">
         <RecipeList {...{ id: params.userId, isOwner }} />
       </div>
     </div>

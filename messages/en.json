@@ -1,6 +1,12 @@
 {
   "greeting": "Hello",
   "farewell": "Goodbye",
+  "Greeting": {
+    "morning": "Good morning",
+    "afternoon": "Good afternoon",
+    "evening": "Good evening",
+    "night": "Good night"
+  },
   "Units": {
     "ml": "ml",
     "gram": "gram",
@@ -16,7 +22,9 @@
   },
   "HomePage": {
     "title": "Hello world!",
-    "welcome": "Welcome"
+    "welcome": "Welcome",
+    "bartenderBaristaRecipe": "Bartender/Barista's recipe",
+    "view": "View"
   },
   "LocaleSwitcher": {
     "en": "English",
@@ -32,7 +40,7 @@
     "share": "Share",
     "add": "Add",
     "shareTitle": "Share Your Recipe Link",
-    "shareDescription": "Anyone with this link can dive into your recipe and enjoy the culinary magic!",
+    "shareDescription": "Anyone with this link can dive into your recipe and enjoy the magic!",
     "copy": "Copy",
     "close": "Close"
   },

@@ -42,7 +42,7 @@ type InviteLinkStore = {
 const useInviteLinkStore = create<InviteLinkStore>((set) => ({
   inviteLinks: [],
   inviteLinksByUserId: [],
-  loading: false,
+  loading: true,
   error: null,
 
   // Add a new invite link
@@ -104,7 +104,7 @@ const useInviteLinkStore = create<InviteLinkStore>((set) => ({
       const fetchUsersPromise = useUserStore.getState().fetchUsers();
 
       // Execute both fetches concurrently
-      const [inviteLinksResponse, usersResponse] = await Promise.all([
+      const [inviteLinksResponse] = await Promise.all([
         fetchInviteLinksPromise,
         fetchUsersPromise,
       ]);
@@ -117,9 +117,9 @@ const useInviteLinkStore = create<InviteLinkStore>((set) => ({
       const mappedInviteLinks = inviteLinks.map((inviteLink) => {
         const invitedUsersWithDetails = inviteLink.invitedUsers?.map(
           (invitedUser) => {
-            const userData = users.find(
-              (user) => user.userId === invitedUser.userId,
-            );
+            // const userData = users.find(
+            //   (user) => user.userId === invitedUser.userId,
+            // );
             return {
               userId: invitedUser.userId,
               invited: invitedUser.invited,

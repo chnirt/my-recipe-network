@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import useRecipeStore from "@/stores/recipeStore";
 import RecipeItem from "./RecipeItem";
+import { Skeleton } from "./ui/skeleton";
 
 export default function RecipeList({
   id,
@@ -21,7 +22,19 @@ export default function RecipeList({
     fetchRecipesWithIngredients(id);
   }, [fetchRecipesWithIngredients, id]);
 
-  if (loading) return <p>Loading...</p>;
+  if (loading)
+    return (
+      <div className="flex flex-col gap-4">
+        {Array(3)
+          .fill(0)
+          .map((_, i) => (
+            <Skeleton
+              key={["recipe", "item", i].join("-")}
+              className="h-56 w-full"
+            />
+          ))}
+      </div>
+    );
   if (error) return <p>{error}</p>;
 
   return (
