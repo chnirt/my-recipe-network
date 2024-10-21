@@ -2,7 +2,7 @@
 
 import { SignedIn, useAuth, UserButton } from "@clerk/nextjs";
 import React, { useCallback, useEffect } from "react";
-import { GlassWater, Home, Settings } from "lucide-react";
+import { GlassWater, Home, Link } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Tooltip,
@@ -29,7 +29,7 @@ function Navbar() {
     [router, userId],
   );
 
-  const goToSettings = useCallback(() => router.push("/settings"), [router]);
+  const goToLink = useCallback(() => router.push("/link"), [router]);
 
   return (
     <aside className="inset-y fixed left-0 z-30 flex h-full flex-col border-r">
@@ -70,16 +70,17 @@ function Navbar() {
               size="icon"
               className={cn(
                 "rounded-lg",
-                pathname.includes("/settings") && "bg-muted",
+                pathname.includes("/link") && "bg-muted",
               )}
-              aria-label="Settings"
-              onClick={goToSettings}
+              aria-label="link"
+              onClick={goToLink}
             >
-              <Settings className="size-5" />
+              <Link className="size-5" />
             </Button>
           </TooltipTrigger>
           <TooltipContent side="right" sideOffset={5}>
-            {t("settings")}
+            {/* copyLink */}
+            {t("link")}
           </TooltipContent>
         </Tooltip>
       </nav>

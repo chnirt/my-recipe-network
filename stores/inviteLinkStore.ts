@@ -17,6 +17,7 @@ export type InviteLink = {
     userId: string;
     invited: boolean;
     accessRevoked: boolean;
+    inviterDetails?: Creator;
   }>;
   createdAt?: string;
   createdBy?: string;
@@ -26,15 +27,19 @@ export type InviteLink = {
 type InviteLinkStore = {
   inviteLinks: InviteLink[];
   inviteLinksByUserId: InviteLink[];
+  inviteLink: InviteLink | null;
   loading: boolean;
   error: string | null;
   addInviteLink: (recipeId: string) => Promise<string | null>;
   fetchInviteLinks: () => Promise<void>;
   fetchInviteLinksByUserId: (userId: string) => Promise<void>;
+  fetchInviteLink: (inviteLinkId: string) => Promise<InviteLink | null>; // New function
   acceptInvite: (inviteLinkId: string) => Promise<void>;
   revokeAccess: (inviteLinkId: string, userId: string) => Promise<void>;
+  restoreAccess: (inviteLinkId: string, userId: string) => Promise<void>;
   setInviteLinks: (inviteLinks: InviteLink[]) => void;
   setInviteLinksByUserId: (inviteLinks: InviteLink[]) => void;
+  setInviteLink: (inviteLink: InviteLink | null) => void;
   setLoading: (loading: boolean) => void;
   setError: (error: string | null) => void;
 };
@@ -42,10 +47,11 @@ type InviteLinkStore = {
 const useInviteLinkStore = create<InviteLinkStore>((set) => ({
   inviteLinks: [],
   inviteLinksByUserId: [],
+  inviteLink: null,
   loading: true,
   error: null,
 
-  // Add a new invite link
+  // Other methods remain the same...
   addInviteLink: async (recipeId) => {
     set({ loading: true, error: null });
     try {
@@ -62,7 +68,7 @@ const useInviteLinkStore = create<InviteLinkStore>((set) => ({
       }
 
       const data = await response.json();
-      return data.inviteLinkId; // Ensure response includes inviteLinkId
+      return data.inviteLinkId;
     } catch (error: unknown) {
       set({ error: (error as Error).message });
       console.error("Error adding invite link:", error);
@@ -95,40 +101,29 @@ const useInviteLinkStore = create<InviteLinkStore>((set) => ({
   fetchInviteLinksByUserId: async (userId: string) => {
     set({ loading: true, error: null });
     try {
-      // Fetch invite links for the specified userId
       const fetchInviteLinksPromise = fetch(
         `/api/inviteLinks/invited?userId=${userId}`,
       );
 
-      // Fetch users to map invite links with user information
       const fetchUsersPromise = useUserStore.getState().fetchUsers();
 
-      // Execute both fetches concurrently
       const [inviteLinksResponse] = await Promise.all([
         fetchInviteLinksPromise,
         fetchUsersPromise,
       ]);
 
-      // Parse invite links and users data
       const inviteLinks: InviteLink[] = await inviteLinksResponse.json();
-      const users: User[] = useUserStore.getState().users; // Assume User is a defined type
+      const users: User[] = useUserStore.getState().users;
 
-      // Map invite links with user data
       const mappedInviteLinks = inviteLinks.map((inviteLink) => {
         const invitedUsersWithDetails = inviteLink.invitedUsers?.map(
-          (invitedUser) => {
-            // const userData = users.find(
-            //   (user) => user.userId === invitedUser.userId,
-            // );
-            return {
-              userId: invitedUser.userId,
-              invited: invitedUser.invited,
-              accessRevoked: invitedUser.accessRevoked,
-            };
-          },
+          (invitedUser) => ({
+            userId: invitedUser.userId,
+            invited: invitedUser.invited,
+            accessRevoked: invitedUser.accessRevoked,
+          }),
         );
 
-        // Find the creator's user data based on createdBy
         const creatorData = users.find(
           (user) => user.userId === inviteLink.createdBy,
         );
@@ -144,14 +139,62 @@ const useInviteLinkStore = create<InviteLinkStore>((set) => ({
                 firstName: creatorData.firstName,
                 lastName: creatorData.lastName,
               }
-            : undefined, // Include creator details
+            : undefined,
         };
       });
 
-      // Update the state with mapped invite links
       set({ inviteLinksByUserId: mappedInviteLinks });
     } catch (error: unknown) {
       set({ error: (error as Error).message });
+    } finally {
+      set({ loading: false });
+    }
+  },
+
+  // Fetch a specific invite link by inviteLinkId
+  fetchInviteLink: async (inviteLinkId: string) => {
+    set({ loading: true, error: null });
+    try {
+      const response = await fetch(`/api/inviteLinks/${inviteLinkId}`);
+      if (!response.ok) {
+        throw new Error("Failed to fetch invite link");
+      }
+
+      const data: InviteLink = await response.json();
+
+      // Fetch all users to map the invitedUsers
+      const users = await useUserStore.getState().fetchUsers();
+
+      // Map the invited users with their corresponding details
+      const mappedInvitedUsers =
+        data.invitedUsers?.map((invitedUser) => {
+          const user = users.find((u) => u.userId === invitedUser.userId);
+          return {
+            ...invitedUser,
+            inviterDetails: user
+              ? {
+                  name: `${user.firstName} ${user.lastName}`,
+                  email: user.email,
+                  avatar: user.avatar,
+                  firstName: user.firstName,
+                  lastName: user.lastName,
+                }
+              : undefined, // If no user found, keep it as null
+          };
+        }) ?? [];
+
+      // Update the invite link with mapped user details
+      const inviteLinkWithMappedUsers = {
+        ...data,
+        invitedUsers: mappedInvitedUsers,
+      };
+
+      set({ inviteLink: inviteLinkWithMappedUsers }); // Update state with the fetched invite link
+      return inviteLinkWithMappedUsers;
+    } catch (error: unknown) {
+      set({ error: (error as Error).message });
+      console.error("Error fetching invite link:", error);
+      return null;
     } finally {
       set({ loading: false });
     }
@@ -179,14 +222,14 @@ const useInviteLinkStore = create<InviteLinkStore>((set) => ({
     }
   },
 
-  // Revoke access for a specific invited user by their userId
+  // Revoke access for a specific invited user by marking their accessRevoked as true
   revokeAccess: async (inviteLinkId, userId) => {
     set({ loading: true, error: null });
     try {
       const response = await fetch(
         `/api/inviteLinks/${inviteLinkId}/revoke?userId=${userId}`,
         {
-          method: "DELETE",
+          method: "PUT", // Use PUT to update the user's accessRevoked field
         },
       );
 
@@ -194,11 +237,36 @@ const useInviteLinkStore = create<InviteLinkStore>((set) => ({
         throw new Error("Failed to revoke access");
       }
 
-      // Refresh the invite links after revocation
-      await useInviteLinkStore.getState().fetchInviteLinks();
+      // Refresh the invite link after revocation
+      await useInviteLinkStore.getState().fetchInviteLink(inviteLinkId);
     } catch (error: unknown) {
       set({ error: (error as Error).message });
       console.error("Error revoking access:", error);
+    } finally {
+      set({ loading: false });
+    }
+  },
+
+  // Restore access for a specific invited user by marking their accessRevoked as false
+  restoreAccess: async (inviteLinkId: string, userId: string) => {
+    set({ loading: true, error: null });
+    try {
+      const response = await fetch(
+        `/api/inviteLinks/${inviteLinkId}/restore?userId=${userId}`,
+        {
+          method: "PUT", // Use PUT to update the user's accessRevoked field
+        },
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to restore access");
+      }
+
+      // Refresh the invite link after restoration
+      await useInviteLinkStore.getState().fetchInviteLink(inviteLinkId);
+    } catch (error: unknown) {
+      set({ error: (error as Error).message });
+      console.error("Error restoring access:", error);
     } finally {
       set({ loading: false });
     }
@@ -208,6 +276,7 @@ const useInviteLinkStore = create<InviteLinkStore>((set) => ({
   setInviteLinks: (inviteLinks: InviteLink[]) => set({ inviteLinks }),
   setInviteLinksByUserId: (inviteLinks: InviteLink[]) =>
     set({ inviteLinksByUserId: inviteLinks }),
+  setInviteLink: (inviteLink: InviteLink | null) => set({ inviteLink }),
   setLoading: (loading: boolean) => set({ loading }),
   setError: (error: string | null) => set({ error }),
 }));

@@ -33,7 +33,7 @@
   },
   "Navbar": {
     "myRecipe": "Công thức của tôi",
-    "settings": "Cài đặt"
+    "link": "Liên kết"
   },
   "Collection": {
     "filterRecipes": "Lọc công thức...",
@@ -85,5 +85,15 @@
     "deletedDescription": "Không thể hoàn tác hành động này. Việc xóa thành phần này sẽ xóa thành phần đó và tất cả dữ liệu liên quan khỏi.",
     "cancel": "Hủy bỏ",
     "continue": "Tiếp tục"
+  },
+  "LinkPage": {
+    "linkTitle": "Chia sẻ công thức này",
+    "linkDescription": "Bất kỳ ai có liên kết đều có thể xem công thức này.",
+    "peopleWithAccess": "Những người có quyền truy cập",
+    "removeDirectAccess": "Xóa quyền truy cập trực tiếp",
+    "canView": "Có thể xem",
+    "noInvitedUsersFound": "Không tìm thấy người dùng được mời",
+    "copied": "Đã sao chép!",
+    "copyLink": "Sao chép liên kết"
   }
 }

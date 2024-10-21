@@ -33,7 +33,7 @@
   },
   "Navbar": {
     "myRecipe": "My Recipe",
-    "settings": "Settings"
+    "link": "Link"
   },
   "Collection": {
     "filterRecipes": "Filter recipes...",
@@ -85,5 +85,15 @@
     "deletedDescription": "This action cannot be undone. Deleting this ingredient will remove it and all its associated data from our.",
     "cancel": "Cancel",
     "continue": "Continue"
+  },
+  "LinkPage": {
+    "linkTitle": "Share this recipe",
+    "linkDescription": "Anyone with the link can view this recipe.",
+    "peopleWithAccess": "People with access",
+    "removeDirectAccess": "Remove direct access",
+    "canView": "Can view",
+    "noInvitedUsersFound": "No invited users found",
+    "copied": "Copied!",
+    "copyLink": "Copy Link"
   }
 }

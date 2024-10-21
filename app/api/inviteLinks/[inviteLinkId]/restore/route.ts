@@ -68,7 +68,7 @@ export async function PUT(
       invitedUsers: invitedUsers.map(
         (user: { userId: string; accessRevoked: boolean }) =>
           user.userId === targetUserId
-            ? { ...user, accessRevoked: true }
+            ? { ...user, accessRevoked: false }
             : user,
       ),
     });

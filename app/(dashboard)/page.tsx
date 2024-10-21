@@ -53,7 +53,8 @@ export default function Page() {
     <div className="flex flex-col gap-4 px-4 pb-8 pt-4">
       <div>
         <Typography variant={"p"}>
-          {greeting}{", "}
+          {greeting}
+          {", "}
           <Typography variant={"p"} className="font-bold">
             {user.firstName} {user.lastName}
           </Typography>

@@ -21,7 +21,6 @@ export async function GET(request: NextRequest) {
       return createResponse({ error: "User ID is required" }, 400);
     }
 
-    console.log("🚀 ~ GET ~ inviteUserId:", inviteUserId);
     // Reference to the inviteLinks collection
     const inviteLinksRef = collection(db, "inviteLinks");
 
@@ -44,7 +43,8 @@ export async function GET(request: NextRequest) {
       .filter((inviteLink) => {
         // Check if the userId is in the invitedUsers array
         return inviteLink.invitedUsers?.some(
-          (user: { userId: string }) => user.userId === inviteUserId,
+          (user: { userId: string; accessRevoked: boolean }) =>
+            user.userId === inviteUserId && user.accessRevoked === false,
         );
       });
 
