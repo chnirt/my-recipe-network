@@ -23,8 +23,10 @@
   "HomePage": {
     "title": "Xin chào thế giới!",
     "welcome": "Chào mừng",
-    "bartenderBaristaRecipe": "Công thức của Người pha chế rượu/cà phê",
-    "view": "Xem"
+    "recipeTitle": "Công thức của Người pha chế rượu/cà phê",
+    "recipeDescription": "Bộ sưu tập các công thức pha chế đồ uống sáng tạo dành cho người pha chế và thợ pha chế, bao gồm cocktail, mocktail, cà phê đặc sản và trà để nâng cao tay nghề của bạn.",
+    "view": "Xem",
+    "theStoryTellers": "Những Người Kể Chuyện"
   },
   "LocaleSwitcher": {
     "en": "English",

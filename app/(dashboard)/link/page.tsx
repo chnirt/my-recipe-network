@@ -18,11 +18,11 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
-import { Skeleton } from "@/components/ui/skeleton";
 import useInviteLinkStore from "@/stores/inviteLinkStore";
 import { useAuth } from "@clerk/nextjs";
 import { useTranslations } from "next-intl";
 import React, { useCallback, useEffect, useState } from "react";
+import Loading from "./loading";
 
 export default function Page() {
   const {
@@ -100,12 +100,7 @@ export default function Page() {
     [handleRestoreAccess, handleRevokeAccess],
   );
 
-  if (loading)
-    return (
-      <div className="px-4 pb-8 pt-4">
-        <Skeleton className="h-80 w-full" />
-      </div>
-    );
+  if (loading) return <Loading />;
   if (error) return <div>Error: {error}</div>;
 
   return (

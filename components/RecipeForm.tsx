@@ -191,6 +191,7 @@ const RecipeForm = ({ id }: { id?: string }) => {
               </Button>
             </div>
           </div>
+
           <div className="grid gap-4 md:grid-cols-[1fr_250px] lg:grid-cols-3 lg:gap-8">
             <div className="grid auto-rows-max items-start gap-4 lg:col-span-3 lg:gap-8">
               <Card x-chunk="dashboard-07-chunk-0">
@@ -249,7 +250,30 @@ const RecipeForm = ({ id }: { id?: string }) => {
                     name="ingredients"
                     render={({ field }) => (
                       <FormItem className="grid gap-3">
-                        <Table>
+                        <div className="overflow-x-auto">
+                          <Table className="min-w-full">
+                            <TableHeader>
+                              <TableRow className="h-16">
+                                <TableHead>{t("ingredient")}</TableHead>
+                                <TableHead>{t("quantity")}</TableHead>
+                                <TableHead>{t("unit")}</TableHead>
+                                <TableHead>
+                                  <span className="sr-only">Actions</span>
+                                </TableHead>
+                              </TableRow>
+                            </TableHeader>
+                            <TableBody>
+                              <IngredientList
+                                {...{
+                                  defaultValue: ingredients,
+                                  ...field,
+                                  onIngredientClick,
+                                }}
+                              />
+                            </TableBody>
+                          </Table>
+                        </div>
+                        {/* <Table>
                           <TableHeader>
                             <TableRow>
                               <TableHead>{t("ingredient")}</TableHead>
@@ -269,7 +293,7 @@ const RecipeForm = ({ id }: { id?: string }) => {
                               }}
                             />
                           </TableBody>
-                        </Table>
+                        </Table> */}
                         <FormMessage />
                       </FormItem>
                     )}

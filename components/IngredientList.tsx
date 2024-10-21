@@ -78,7 +78,7 @@ const IngredientList = ({
           })
           .map((ingredient, ii) => {
             return (
-              <TableRow key={["ingredient", ii].join("-")}>
+              <TableRow key={["ingredient", ii].join("-")} className="h-16">
                 <TableCell
                   className="cursor-pointer font-semibold"
                   onClick={() =>

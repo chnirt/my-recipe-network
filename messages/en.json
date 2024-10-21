@@ -23,8 +23,10 @@
   "HomePage": {
     "title": "Hello world!",
     "welcome": "Welcome",
-    "bartenderBaristaRecipe": "Bartender/Barista's recipe",
-    "view": "View"
+    "recipeTitle": "Bartender/Barista's recipe",
+    "recipeDescription": "A collection of creative drink recipes for bartenders and baristas, featuring cocktails, mocktails, specialty coffees, and teas to elevate your craft.",
+    "view": "View",
+    "theStoryTellers": "The Storytellers"
   },
   "LocaleSwitcher": {
     "en": "English",
