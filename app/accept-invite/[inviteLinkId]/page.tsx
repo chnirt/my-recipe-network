@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import useInviteLinkStore from "@/stores/inviteLinkStore";
 import {
@@ -21,7 +21,6 @@ const AcceptInvitePage = ({ params }: { params: { inviteLinkId: string } }) => {
   const { inviteLinkId } = params;
   const { acceptInvite, error } = useInviteLinkStore();
   const [loading, setLoading] = useState(true);
-  const success = useMemo(() => !error, [error]);
   const t = useTranslations("AcceptInvitePage");
 
   useEffect(() => {
