@@ -97,5 +97,14 @@
     "noInvitedUsersFound": "No invited users found",
     "copied": "Copied!",
     "copyLink": "Copy Link"
+  },
+  "AcceptInvitePage": {
+    "title": "Invite Acceptance",
+    "description": "Processing your invitation",
+    "successTitle": "Success",
+    "successDescription": "Your invitation has been accepted successfully!",
+    "errorTitle": "Error",
+    "errorDescription": "Failed to accept invite",
+    "goToDashboard": "Go to Dashboard"
   }
 }

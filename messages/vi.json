@@ -97,5 +97,14 @@
     "noInvitedUsersFound": "Không tìm thấy người dùng được mời",
     "copied": "Đã sao chép!",
     "copyLink": "Sao chép liên kết"
+  },
+  "AcceptInvitePage": {
+    "title": "Mời chấp nhận",
+    "description": "Đang xử lý lời mời của bạn",
+    "successTitle": "Thành công",
+    "successDescription": "Lời mời của bạn đã được chấp nhận thành công!",
+    "errorTitle": "Lỗi",
+    "errorDescription": "Không chấp nhận được lời mời",
+    "goToDashboard": "Đi đến Bảng điều khiển"
   }
 }
