@@ -7,6 +7,7 @@ import { NextIntlClientProvider } from "next-intl";
 import { getLocale, getMessages } from "next-intl/server";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as SonnerToaster } from "@/components/ui/sonner";
+import { ThemeProvider } from "@/components/theme-provider";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -50,13 +51,20 @@ export default async function RootLayout({
         <body
           className={`${geistSans.variable} ${geistMono.variable} flex min-h-dvh items-center justify-center antialiased`}
         >
-          <TooltipProvider>
-            <NextIntlClientProvider messages={messages}>
-              {children}
-              <Toaster />
-              <SonnerToaster />
-            </NextIntlClientProvider>
-          </TooltipProvider>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <TooltipProvider>
+              <NextIntlClientProvider messages={messages}>
+                {children}
+                <Toaster />
+                <SonnerToaster />
+              </NextIntlClientProvider>
+            </TooltipProvider>
+          </ThemeProvider>
         </body>
       </html>
     </ClerkProvider>

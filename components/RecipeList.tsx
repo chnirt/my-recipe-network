@@ -41,7 +41,14 @@ export default function RecipeList({
     <div className="flex flex-col gap-4">
       {searchedRecipes.map((recipe, index) => (
         <div key={index}>
-          <RecipeItem {...{ recipe, remove: removeRecipe, isOwner }} />
+          <RecipeItem
+            {...{
+              recipe,
+              remove: removeRecipe,
+              isOwner,
+              number: index + 1,
+            }}
+          />
         </div>
       ))}
     </div>

@@ -13,6 +13,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import LocaleSwitcher from "@/components/LocaleSwitcher";
 import { useTranslations } from "next-intl";
+import { ModeToggle } from "@/components/ModeToggle";
 
 function Navbar() {
   const t = useTranslations("Navbar");
@@ -85,6 +86,7 @@ function Navbar() {
         </Tooltip>
       </nav>
       <nav className="mt-auto grid gap-1 p-2">
+        <ModeToggle />
         <LocaleSwitcher />
         <div className="flex items-center justify-center">
           <SignedIn>

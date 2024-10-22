@@ -36,10 +36,12 @@ export default function RecipeItem({
   recipe,
   remove,
   isOwner,
+  number,
 }: {
   recipe: Recipe;
   remove: (id: string) => Promise<void>;
   isOwner: boolean;
+  number: number;
 }) {
   const t = useTranslations();
   const router = useRouter();
@@ -53,7 +55,9 @@ export default function RecipeItem({
     <Card className="xl:col-span-2" x-chunk="dashboard-01-chunk-4">
       <CardHeader className="flex flex-row items-center">
         <div className="flex flex-col justify-center">
-          <CardTitle>{recipe.name}</CardTitle>
+          <CardTitle>
+            {number}. {recipe.name}
+          </CardTitle>
           <CardDescription>{recipe.note}</CardDescription>
         </div>
         {isOwner ? (

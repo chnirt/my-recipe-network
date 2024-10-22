@@ -16,7 +16,6 @@ export default function Page({ params }: { params: { userId: string } }) {
   const t = useTranslations("Collection");
   const { userId } = useAuth();
   const [searchName, setSearchName] = useState("");
-  const { fetchRecipes } = useRecipeStore();
   const { searchRecipes } = useRecipeStore();
 
   const isOwner = useMemo(() => userId === params.userId, [userId, params]);
@@ -34,7 +33,7 @@ export default function Page({ params }: { params: { userId: string } }) {
     return () => {
       debouncedFetchRecipes.cancel();
     };
-  }, [fetchRecipes, searchRecipes, searchName]); // Add fetchRecipes to dependencies
+  }, [, searchRecipes, searchName]); // Add fetchRecipes to dependencies
 
   function add() {
     router.push(`/${userId}/recipe/add`);

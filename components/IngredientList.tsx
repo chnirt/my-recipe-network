@@ -12,7 +12,7 @@ import {
 import { UnitArray } from "@/data/recipes";
 import { useTranslations } from "next-intl";
 import { Button } from "./ui/button";
-import { Trash } from "lucide-react";
+import { Pen, Trash } from "lucide-react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -26,8 +26,9 @@ import {
 } from "./ui/alert-dialog";
 import { Unit } from "@/types";
 import NumberInput from "./NumberInput";
+import { Skeleton } from "./ui/skeleton";
 
-const columns = ["Ingredient", "Quantity", "Unit"];
+const columns = ["Ingredient", "Quantity", "Unit", "Action"];
 
 const IngredientList = ({
   defaultValue,
@@ -48,7 +49,14 @@ const IngredientList = ({
     fetchIngredients();
   }, [fetchIngredients]);
 
-  if (loading) return <p>Loading...</p>;
+  if (loading)
+    return (
+      <TableRow>
+        <TableCell colSpan={columns.length} className="p-0">
+          <Skeleton className="h-64 w-full rounded-none" />
+        </TableCell>
+      </TableRow>
+    );
   if (error) return <p>{error}</p>;
 
   return (
@@ -79,14 +87,7 @@ const IngredientList = ({
           .map((ingredient, ii) => {
             return (
               <TableRow key={["ingredient", ii].join("-")} className="h-16">
-                <TableCell
-                  className="cursor-pointer font-semibold"
-                  onClick={() =>
-                    typeof onIngredientClick === "function" && ingredient.id
-                      ? onIngredientClick(ingredient.id)
-                      : undefined
-                  }
-                >
+                <TableCell className="font-semibold">
                   {ingredient.name}
                 </TableCell>
                 <TableCell>
@@ -186,7 +187,20 @@ const IngredientList = ({
                     </SelectContent>
                   </Select>
                 </TableCell>
-                <TableCell className="text-right">
+                <TableCell className="space-x-2 text-right">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="gap-1"
+                    onClick={() =>
+                      typeof onIngredientClick === "function" && ingredient.id
+                        ? onIngredientClick(ingredient.id)
+                        : undefined
+                    }
+                  >
+                    <Pen className="size-4" />
+                    <span className="sr-only">Pen</span>
+                  </Button>
                   <AlertDialog>
                     <AlertDialogTrigger asChild>
                       <Button variant="ghost" size="icon" className="gap-1">
