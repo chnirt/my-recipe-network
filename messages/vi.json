@@ -106,5 +106,10 @@
     "errorTitle": "Lỗi",
     "errorDescription": "Không chấp nhận được lời mời",
     "goToDashboard": "Đi đến Bảng điều khiển"
+  },
+  "RecipeList": {
+    "title": "Không thể tải công thức",
+    "description": "Có lỗi xảy ra khi cố gắng tải công thức. Vui lòng thử lại hoặc quay lại trang chủ.",
+    "goToDashboard": "Đi đến Bảng điều khiển"
   }
 }

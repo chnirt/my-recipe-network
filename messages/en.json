@@ -106,5 +106,10 @@
     "errorTitle": "Error",
     "errorDescription": "Failed to accept invite",
     "goToDashboard": "Go to Dashboard"
+  },
+  "RecipeList": {
+    "title": "Failed to fetch recipes",
+    "description": "Something went wrong while trying to load the recipes. Please try again or go back to the home page.",
+    "goToDashboard": "Go to Dashboard"
   }
 }

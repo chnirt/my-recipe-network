@@ -92,7 +92,12 @@ const useRecipeStore = create<RecipeStore>((set, get) => ({
         fetchIngredientsPromise,
       ]);
 
+      if (!recipesResponse.ok) {
+        throw new Error("Failed to fetch recipes");
+      }
+
       const recipes = await recipesResponse.json();
+
       const ingredients = useIngredientStore.getState().ingredients;
 
       // Map ingredients into recipes
@@ -141,6 +146,7 @@ const useRecipeStore = create<RecipeStore>((set, get) => ({
     set({ loading: true, error: null });
     try {
       const response = await fetch(`/api/recipes/${id}`);
+
       if (!response.ok) {
         throw new Error("Failed to fetch recipe");
       }
