@@ -105,7 +105,7 @@ export default function Layout({
   children: React.ReactNode;
 }>) {
   return (
-    <div className="flex h-screen w-full pl-[57px]">
+    <div className="flex h-screen w-full pl-[53px]">
       <Navbar />
       <div className="flex w-full flex-col pt-[53px]">
         <header className="fixed top-0 z-20 flex h-[53px] w-full items-center gap-1 border-b bg-background px-4">
