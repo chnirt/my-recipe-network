@@ -55,8 +55,6 @@ export default async function RootLayout({
       appearance={{
         variables: {
           colorPrimary: "hsl(20, 61%, 56%)",
-          colorText: "hsl(0, 0%, 98%)", // Adjust text color if needed
-          colorBackground: "hsl(0, 0%, 100%)",
         },
         elements: {
           // Customize specific elements like buttons, inputs, etc.
@@ -74,7 +72,7 @@ export default async function RootLayout({
         >
           <ThemeProvider
             attribute="class"
-            defaultTheme="system"
+            defaultTheme="light"
             enableSystem
             disableTransitionOnChange
           >
